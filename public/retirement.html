@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>FLiCK Calc - 퇴직금 계산기</title>
+  <meta name="description" content="퇴직 전 3개월 임금과 재직기간을 입력해 예상 퇴직금을 계산합니다.">
+  <style>
+    :root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--input:#fff;--input-border:#d0d5dd;--primary:#2563eb;--primary-dark:#1749b5;--result:#eef4ff;--line:#eaecf0;--shadow:rgba(16,24,40,.06);--soft:#f8fafc}
+    html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--input:#11141a;--input-border:#3b424f;--primary:#4f8cff;--primary-dark:#8db3ff;--result:#182846;--line:#2b303a;--shadow:rgba(0,0,0,.28);--soft:#11141a}
+    *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}
+    .wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:24px 0 48px}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}
+    header{padding:8px 4px 20px;position:relative}h1{margin:8px 0 6px;font-size:clamp(27px,7vw,40px);line-height:1.15}.sub{margin:0;color:var(--muted);font-size:14px}
+    .theme{position:absolute;right:0;top:0;min-height:42px;padding:0 13px;border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--text);font-weight:800;cursor:pointer}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:20px;box-shadow:0 10px 30px var(--shadow)}.field{margin-bottom:15px}label{display:block;margin-bottom:7px;font-size:14px;font-weight:800}.input-row{display:flex;align-items:center;gap:8px}
+    input{width:100%;min-height:50px;border:1px solid var(--input-border);border-radius:12px;padding:0 14px;font-size:16px;outline:0;background:var(--input);color:var(--text)}input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12)}.unit{white-space:nowrap;color:var(--muted);font-size:14px}
+    .calc{width:100%;min-height:54px;border:0;border-radius:13px;background:var(--primary);color:#fff;font-size:16px;font-weight:900;cursor:pointer}.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.tool{min-height:44px;border:1px solid var(--border);border-radius:11px;background:var(--soft);color:var(--text);font-weight:800;cursor:pointer}
+    .result{margin-top:18px;padding:22px;border-radius:18px;background:var(--result);text-align:center}.label{font-size:14px;color:var(--muted)}.amount{margin-top:5px;font-size:clamp(31px,9vw,48px);font-weight:950;letter-spacing:-.04em;color:var(--primary-dark)}.summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.summary-card{padding:12px 8px;border:1px solid var(--border);border-radius:13px;background:var(--soft);text-align:center}.summary-label{font-size:11px;color:var(--muted)}.summary-value{margin-top:4px;font-size:14px;font-weight:900}
+    .notice{margin:16px 2px 0;font-size:12px;line-height:1.7;color:var(--muted)}.status{min-height:18px;margin-top:8px;text-align:center;font-size:12px;color:var(--muted)}
+    @media(max-width:420px){.wrap{width:calc(100% - 18px);padding-top:16px}.card{padding:16px;border-radius:18px}.theme{position:relative;top:auto;right:auto;margin-top:14px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="brand">FLiCK CALC</div>
+      <button class="theme" id="theme" type="button">🌙 다크모드</button>
+      <h1>퇴직금 계산기</h1>
+      <p class="sub">퇴직 전 3개월 임금과 재직기간을 기준으로 예상 퇴직금을 계산합니다.</p>
+    </header>
+    <section class="card">
+      <form id="form" autocomplete="off">
+        <div class="field"><label for="pay">퇴직 전 3개월 임금 총액</label><div class="input-row"><input id="pay" type="number" inputmode="numeric" min="0" step="10000" value="10000000" required><span class="unit">원</span></div></div>
+        <div class="field"><label for="days3">퇴직 전 3개월 총일수</label><div class="input-row"><input id="days3" type="number" inputmode="numeric" min="1" max="366" step="1" value="91" required><span class="unit">일</span></div></div>
+        <div class="field"><label for="service">총 재직일수</label><div class="input-row"><input id="service" type="number" inputmode="numeric" min="365" step="1" value="3650" required><span class="unit">일</span></div></div>
+        <button class="calc" type="submit">퇴직금 계산하기</button>
+      </form>
+      <div class="tools"><button class="tool" id="share" type="button">🔗 결과 공유</button><button class="tool" id="reset" type="button">↺ 초기화</button></div>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+      <section class="result" aria-live="polite" aria-atomic="true"><div class="label">예상 퇴직금</div><div class="amount" id="result">-</div></section>
+      <div class="summary"><div class="summary-card"><div class="summary-label">1일 평균임금</div><div class="summary-value" id="daily">-</div></div><div class="summary-card"><div class="summary-label">30일분 평균임금</div><div class="summary-value" id="thirty">-</div></div></div>
+      <p class="notice">※ 고용노동부 공식 산식에 따른 단순 예상 계산입니다. 평균임금이 통상임금보다 낮은 경우 통상임금을 평균임금으로 적용해야 하며, 평균임금 산정 제외기간·임금 항목 등 개별 사정에 따라 실제 퇴직금은 달라질 수 있습니다.</p>
+    </section>
+  </main>
+  <script>
+    // 원화 금액을 읽기 쉽게 표시합니다.
+    const won=v=>Math.round(v).toLocaleString('ko-KR')+'원';
+    const $=id=>document.getElementById(id);
+    const root=document.documentElement;
+    // 사용자가 선택한 다크모드 상태를 저장합니다.
+    const saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
+    function themeText(){ $('theme').textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'; }
+    $('theme').addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');themeText()});themeText();
+
+    // 입력값을 숫자로 변환하고 최소값을 적용합니다.
+    function num(id,min){const v=Number($(id).value);return Number.isFinite(v)?Math.max(min,v):min;}
+
+    // 고용노동부 공식 산식: 평균임금 × 30일 × 총 재직일수 / 365일.
+    function calculate(){
+      const pay=num('pay',0),days3=num('days3',1),service=num('service',0);
+      const daily=pay/days3;
+      const thirty=daily*30;
+      const severance=thirty*service/365;
+      $('daily').textContent=won(daily);
+      $('thirty').textContent=won(thirty);
+      $('result').textContent=won(severance);
+      // 공유할 수 있도록 현재 계산 조건을 URL에 저장합니다.
+      const p=new URLSearchParams({pay:Math.round(pay),days3:Math.round(days3),service:Math.round(service)});history.replaceState(null,'','?'+p.toString());
+    }
+
+    // 공유 링크로 들어왔으면 입력값을 복원합니다.
+    const params=new URLSearchParams(location.search);['pay','days3','service'].forEach(id=>{if(params.has(id))$(id).value=params.get(id)});
+    $('form').addEventListener('submit',e=>{e.preventDefault();calculate();$('status').textContent='계산이 완료되었습니다.';});
+    $('share').addEventListener('click',async()=>{calculate();try{if(navigator.share){await navigator.share({title:'FLiCK Calc - 퇴직금 계산기',url:location.href});}else{await navigator.clipboard.writeText(location.href);$('status').textContent='계산 링크를 복사했습니다.';}}catch(e){}});
+    $('reset').addEventListener('click',()=>{ $('pay').value=10000000;$('days3').value=91;$('service').value=3650;history.replaceState(null,'',location.pathname);calculate();$('status').textContent='기본값으로 초기화했습니다.'; });
+    calculate();
+  </script>
+</body>
+</html>
