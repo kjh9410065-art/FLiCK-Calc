@@ -3,15 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
   <title>FLiCK Calc - 연봉 실수령액 계산기</title>
   <meta name="description" content="연봉을 입력하면 2026년 기준 예상 월 실수령액을 계산하는 FLiCK Calc입니다.">
   <style>
-    /* 화면 전체에서 사용하는 색상을 변수로 관리합니다. */
     :root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--input:#fff;--input-border:#d0d5dd;--primary:#2563eb;--primary-dark:#1749b5;--result:#eef4ff;--line:#eaecf0;--shadow:rgba(16,24,40,.06)}
-    /* 다크 모드 색상입니다. */
     html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--input:#11141a;--input-border:#3b424f;--primary:#4f8cff;--primary-dark:#8db3ff;--result:#182846;--line:#2b303a;--shadow:rgba(0,0,0,.28)}
-    *{box-sizing:border-box}
-    html{background:var(--bg)}
+    *{box-sizing:border-box}html{background:var(--bg)}
     body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif;transition:background .2s,color .2s}
     .wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:24px 0 48px}
     header{padding:8px 4px 20px;position:relative}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}
@@ -29,7 +27,6 @@
     .details{margin-top:18px;border-top:1px solid var(--line)}.row{display:flex;justify-content:space-between;gap:12px;padding:13px 2px;border-bottom:1px solid var(--line);font-size:14px}.row span{color:var(--muted)}.row strong{text-align:right}
     .notice{margin:16px 2px 0;font-size:12px;line-height:1.65;color:var(--muted)}
     @media(max-width:420px){.wrap{width:calc(100% - 18px);padding-top:16px}.card{padding:16px;border-radius:18px}.theme-toggle{position:relative;top:auto;right:auto;margin-top:14px}}
-    /* 모션 감소 설정을 사용하는 기기에서는 불필요한 전환 효과를 제거합니다. */
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
   </style>
 </head>
@@ -57,15 +54,26 @@
   <script>
     // 금액을 한국 원화 표시 형식으로 변환합니다.
     const won=value=>Math.round(value).toLocaleString('ko-KR')+'원';
-
-    // 저장된 테마가 있으면 우선 적용하고, 없으면 휴대폰의 시스템 설정을 따릅니다.
-    const savedTheme=localStorage.getItem('flick-theme');
-    if(savedTheme==='dark'||(!savedTheme&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');
-
-    // 다크/라이트 모드를 전환하고 선택값을 저장합니다.
+    const root=document.documentElement;
     const themeToggle=document.getElementById('themeToggle');
-    function updateThemeButton(){const isDark=document.documentElement.classList.contains('dark');themeToggle.textContent=isDark?'☀️ 라이트모드':'🌙 다크모드';themeToggle.setAttribute('aria-label',isDark?'라이트 모드 전환':'다크 모드 전환')}
-    themeToggle.addEventListener('click',()=>{const isDark=document.documentElement.classList.toggle('dark');localStorage.setItem('flick-theme',isDark?'dark':'light');updateThemeButton()});updateThemeButton();
+
+    // 저장된 테마가 있으면 우선 적용하고, 없으면 기기의 시스템 설정을 따릅니다.
+    const savedTheme=localStorage.getItem('flick-theme');
+    if(savedTheme==='dark'||(!savedTheme&&window.matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
+
+    // 브라우저 상단 주소창 색상도 현재 테마에 맞춥니다.
+    function updateThemeButton(){
+      const isDark=root.classList.contains('dark');
+      themeToggle.textContent=isDark?'☀️ 라이트모드':'🌙 다크모드';
+      themeToggle.setAttribute('aria-label',isDark?'라이트 모드 전환':'다크 모드 전환');
+      document.querySelector('meta[name="theme-color"]').setAttribute('content',isDark?'#0f1115':'#f5f7fb');
+    }
+    themeToggle.addEventListener('click',()=>{
+      const isDark=root.classList.toggle('dark');
+      localStorage.setItem('flick-theme',isDark?'dark':'light');
+      updateThemeButton();
+    });
+    updateThemeButton();
 
     // 2026년 근로자 부담 보험료를 계산합니다.
     function calculate(){
@@ -76,20 +84,21 @@
       const gross=annual/12;
       const taxable=Math.max(0,gross-nontax);
 
-      // 2026년 국민연금 근로자 부담 4.75%, 2026년 7월부터 기준소득월액 상한 659만원을 적용합니다.
+      // 국민연금: 2026년 사업장가입자 본인 부담 4.75%를 적용합니다.
+      // 2026년 7월부터 기준소득월액 상한은 659만원입니다.
       const pension=Math.min(taxable,6590000)*0.0475;
-      // 2026년 건강보험 직장가입자 총 보험료율 7.19%의 근로자 부담 3.595%를 적용합니다.
+      // 건강보험: 2026년 직장가입자 총 7.19%, 근로자 부담 3.595%입니다.
       const health=taxable*0.03595;
-      // 장기요양보험료는 건강보험료의 13.14%를 적용합니다.
+      // 장기요양보험료: 건강보험료의 13.14%를 적용합니다.
       const care=health*0.1314;
-      // 고용보험 근로자 부담 0.9%를 적용합니다.
+      // 고용보험: 근로자 부담 0.9%를 적용합니다.
       const employment=taxable*0.009;
 
-      // 현재 소득세는 간편 예상식입니다. 국세청 간이세액표를 정확히 적용하기 전까지 과도한 정밀성을 표시하지 않습니다.
+      // 소득세는 현재 간편 예상식입니다. 공식 간이세액표를 확보하기 전에는 과도한 정밀성을 주장하지 않습니다.
       const familyRate=Math.min(.45,Math.max(0,(dependents-1)*.035+children*.02));
       let incomeTax=Math.max(0,(taxable*.045-50000)*(1-familyRate));
       incomeTax=Math.min(incomeTax,taxable*.18);
-      // 국세청 간이세액표의 8~20세 자녀 세액공제 규칙을 일부 반영합니다.
+      // 자녀 세액공제 규칙을 보조적으로 반영합니다.
       const childCredit=children===1?12500:children===2?29160:children>=3?29160+(children-2)*25000:0;
       incomeTax=Math.max(0,incomeTax-childCredit);
       const localTax=incomeTax*.1;
@@ -102,10 +111,9 @@
       document.getElementById('details').innerHTML=rows.map(([a,b])=>`<div class="row"><span>${a}</span><strong>${b}</strong></div>`).join('');
     }
 
-    // 버튼을 눌러 계산하고, 입력값을 바꾸면 바로 결과를 다시 계산합니다.
+    // 버튼 제출과 입력값 변경 모두 같은 계산 함수를 사용합니다.
     document.getElementById('calcForm').addEventListener('submit',event=>{event.preventDefault();calculate()});
     ['salary','nontax','dependents','children'].forEach(id=>document.getElementById(id).addEventListener('input',calculate));
-    // 처음 접속했을 때 기본값으로 결과를 표시합니다.
     calculate();
   </script>
 </body>
