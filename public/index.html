@@ -6,38 +6,85 @@
   <title>FLiCK Calc - 연봉 실수령액 계산기</title>
   <meta name="description" content="연봉을 입력하면 2026년 기준 예상 월 실수령액을 계산하는 FLiCK Calc입니다.">
   <style>
-    /* 전체 페이지의 기본 스타일입니다. 모바일에서도 보기 편하게 구성합니다. */
+    /* 화면 전체에서 사용하는 색상을 변수로 관리해 라이트/다크 모드를 쉽게 전환합니다. */
+    :root{
+      color-scheme:light;
+      --bg:#f5f7fb;
+      --text:#151922;
+      --muted:#667085;
+      --card:#fff;
+      --border:#e4e7ec;
+      --input:#fff;
+      --input-border:#d0d5dd;
+      --primary:#2563eb;
+      --primary-dark:#1749b5;
+      --result:#eef4ff;
+      --line:#eaecf0;
+      --shadow:rgba(16,24,40,.06);
+    }
+
+    /* 다크 모드에서 사용할 색상입니다. */
+    html.dark{
+      color-scheme:dark;
+      --bg:#0f1115;
+      --text:#f2f4f7;
+      --muted:#98a2b3;
+      --card:#171a21;
+      --border:#2b303a;
+      --input:#11141a;
+      --input-border:#3b424f;
+      --primary:#4f8cff;
+      --primary-dark:#8db3ff;
+      --result:#182846;
+      --line:#2b303a;
+      --shadow:rgba(0,0,0,.28);
+    }
+
     *{box-sizing:border-box}
-    body{margin:0;background:#f5f7fb;color:#151922;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif;transition:background .2s,color .2s}
     .wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:24px 0 48px}
-    header{padding:8px 4px 20px}
-    .brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:#2563eb}
+    header{padding:8px 4px 20px;position:relative}
+    .brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}
     h1{margin:8px 0 6px;font-size:clamp(27px,7vw,40px);line-height:1.15}
-    .sub{margin:0;color:#667085;font-size:14px}
-    .card{background:#fff;border:1px solid #e4e7ec;border-radius:22px;padding:20px;box-shadow:0 10px 30px rgba(16,24,40,.06)}
+    .sub{margin:0;color:var(--muted);font-size:14px}
+
+    /* 다크 모드 전환 버튼입니다. */
+    .theme-toggle{
+      position:absolute;right:0;top:0;width:auto;min-height:42px;padding:0 13px;
+      border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--text);
+      font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px var(--shadow)
+    }
+    .theme-toggle:active{transform:translateY(1px)}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:20px;box-shadow:0 10px 30px var(--shadow)}
     .field{margin-bottom:15px}
     label{display:block;margin-bottom:7px;font-size:14px;font-weight:800}
     .input-row{display:flex;align-items:center;gap:8px}
-    input{width:100%;min-height:50px;border:1px solid #d0d5dd;border-radius:12px;padding:0 14px;font-size:16px;outline:0;background:#fff}
-    input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
-    .unit{white-space:nowrap;color:#667085;font-size:14px}
-    button{width:100%;min-height:54px;border:0;border-radius:13px;background:#2563eb;color:#fff;font-size:16px;font-weight:900;cursor:pointer}
-    button:active{transform:translateY(1px)}
-    .result{margin-top:18px;padding:22px;border-radius:18px;background:#eef4ff;text-align:center}
-    .result-label{font-size:14px;color:#667085}
-    .take-home{margin-top:5px;font-size:clamp(31px,9vw,48px);font-weight:950;letter-spacing:-.04em;color:#1749b5}
-    .annual{margin-top:5px;font-size:14px;color:#667085}
-    .details{margin-top:18px;border-top:1px solid #eaecf0}
-    .row{display:flex;justify-content:space-between;gap:12px;padding:13px 2px;border-bottom:1px solid #eaecf0;font-size:14px}
-    .row span{color:#667085}.row strong{text-align:right}
-    .notice{margin:16px 2px 0;font-size:12px;line-height:1.65;color:#8a93a2}
-    @media(max-width:420px){.wrap{width:calc(100% - 18px);padding-top:16px}.card{padding:16px;border-radius:18px}}
+    input{width:100%;min-height:50px;border:1px solid var(--input-border);border-radius:12px;padding:0 14px;font-size:16px;outline:0;background:var(--input);color:var(--text)}
+    input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+    .unit{white-space:nowrap;color:var(--muted);font-size:14px}
+    .calc-button{width:100%;min-height:54px;border:0;border-radius:13px;background:var(--primary);color:#fff;font-size:16px;font-weight:900;cursor:pointer}
+    .calc-button:active{transform:translateY(1px)}
+    .result{margin-top:18px;padding:22px;border-radius:18px;background:var(--result);text-align:center}
+    .result-label{font-size:14px;color:var(--muted)}
+    .take-home{margin-top:5px;font-size:clamp(31px,9vw,48px);font-weight:950;letter-spacing:-.04em;color:var(--primary-dark)}
+    .annual{margin-top:5px;font-size:14px;color:var(--muted)}
+    .details{margin-top:18px;border-top:1px solid var(--line)}
+    .row{display:flex;justify-content:space-between;gap:12px;padding:13px 2px;border-bottom:1px solid var(--line);font-size:14px}
+    .row span{color:var(--muted)}.row strong{text-align:right}
+    .notice{margin:16px 2px 0;font-size:12px;line-height:1.65;color:var(--muted)}
+    @media(max-width:420px){
+      .wrap{width:calc(100% - 18px);padding-top:16px}
+      .card{padding:16px;border-radius:18px}
+      .theme-toggle{position:relative;top:auto;right:auto;margin-top:14px}
+    }
   </style>
 </head>
 <body>
   <main class="wrap">
     <header>
       <div class="brand">FLiCK CALC</div>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="다크 모드 전환">🌙 다크모드</button>
       <h1>연봉 실수령액 계산기</h1>
       <p class="sub">연봉을 입력하면 월 예상 실수령액을 계산합니다.</p>
     </header>
@@ -60,7 +107,7 @@
           <label for="children">20세 이하 자녀 수</label>
           <div class="input-row"><input id="children" type="number" min="0" max="20" step="1" value="0"><span class="unit">명</span></div>
         </div>
-        <button type="submit">실수령액 계산하기</button>
+        <button class="calc-button" type="submit">실수령액 계산하기</button>
       </form>
 
       <section class="result" aria-live="polite">
@@ -77,6 +124,26 @@
   <script>
     // 금액을 한국 원화 표시 형식으로 변환합니다.
     const won = value => Math.round(value).toLocaleString('ko-KR') + '원';
+
+    // 저장된 테마가 있으면 우선 적용하고, 없으면 휴대폰의 시스템 설정을 따릅니다.
+    const savedTheme = localStorage.getItem('flick-theme');
+    if(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+      document.documentElement.classList.add('dark');
+    }
+
+    // 다크/라이트 모드를 버튼으로 전환하고 사용자의 선택을 저장합니다.
+    const themeToggle = document.getElementById('themeToggle');
+    function updateThemeButton(){
+      const isDark = document.documentElement.classList.contains('dark');
+      themeToggle.textContent = isDark ? '☀️ 라이트모드' : '🌙 다크모드';
+      themeToggle.setAttribute('aria-label', isDark ? '라이트 모드 전환' : '다크 모드 전환');
+    }
+    themeToggle.addEventListener('click',()=>{
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('flick-theme', isDark ? 'dark' : 'light');
+      updateThemeButton();
+    });
+    updateThemeButton();
 
     // 2026년 근로자 부담 4대보험 요율을 사용합니다.
     function calculate(){
