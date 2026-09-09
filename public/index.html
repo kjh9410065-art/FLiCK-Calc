@@ -20,8 +20,7 @@
     input{width:100%;min-height:50px;border:1px solid var(--input-border);border-radius:12px;padding:0 14px;font-size:16px;outline:0;background:var(--input);color:var(--text)}
     input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
     button:focus-visible,input:focus-visible{outline:3px solid rgba(37,99,235,.35);outline-offset:2px}
-    .unit{white-space:nowrap;color:var(--muted);font-size:14px}
-    .calc-button{width:100%;min-height:54px;border:0;border-radius:13px;background:var(--primary);color:#fff;font-size:16px;font-weight:900;cursor:pointer}.calc-button:active,.theme-toggle:active{transform:translateY(1px)}
+    .unit{white-space:nowrap;color:var(--muted);font-size:14px}.calc-button{width:100%;min-height:54px;border:0;border-radius:13px;background:var(--primary);color:#fff;font-size:16px;font-weight:900;cursor:pointer}.calc-button:active,.theme-toggle:active{transform:translateY(1px)}
     .result{margin-top:18px;padding:22px;border-radius:18px;background:var(--result);text-align:center}.result-label{font-size:14px;color:var(--muted)}
     .take-home{margin-top:5px;font-size:clamp(31px,9vw,48px);font-weight:950;letter-spacing:-.04em;color:var(--primary-dark)}.annual{margin-top:5px;font-size:14px;color:var(--muted)}
     .details{margin-top:18px;border-top:1px solid var(--line)}.row{display:flex;justify-content:space-between;gap:12px;padding:13px 2px;border-bottom:1px solid var(--line);font-size:14px}.row span{color:var(--muted)}.row strong{text-align:right}
@@ -85,7 +84,7 @@
       const taxable=Math.max(0,gross-nontax);
 
       // 국민연금: 2026년 사업장가입자 본인 부담 4.75%를 적용합니다.
-      // 2026년 7월부터 기준소득월액 상한은 659만원입니다.
+      // 기준소득월액 상한은 2026년 7월부터 659만원입니다.
       const pension=Math.min(taxable,6590000)*0.0475;
       // 건강보험: 2026년 직장가입자 총 7.19%, 근로자 부담 3.595%입니다.
       const health=taxable*0.03595;
