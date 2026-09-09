@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FLiCK Calc - 연봉 실수령액 계산기</title>
+  <meta name="description" content="연봉을 입력하면 2026년 기준 예상 월 실수령액을 계산하는 FLiCK Calc입니다.">
+  <style>
+    /* 전체 페이지의 기본 스타일입니다. 모바일에서도 보기 편하게 구성합니다. */
+    *{box-sizing:border-box}
+    body{margin:0;background:#f5f7fb;color:#151922;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}
+    .wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:24px 0 48px}
+    header{padding:8px 4px 20px}
+    .brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:#2563eb}
+    h1{margin:8px 0 6px;font-size:clamp(27px,7vw,40px);line-height:1.15}
+    .sub{margin:0;color:#667085;font-size:14px}
+    .card{background:#fff;border:1px solid #e4e7ec;border-radius:22px;padding:20px;box-shadow:0 10px 30px rgba(16,24,40,.06)}
+    .field{margin-bottom:15px}
+    label{display:block;margin-bottom:7px;font-size:14px;font-weight:800}
+    .input-row{display:flex;align-items:center;gap:8px}
+    input{width:100%;min-height:50px;border:1px solid #d0d5dd;border-radius:12px;padding:0 14px;font-size:16px;outline:0;background:#fff}
+    input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+    .unit{white-space:nowrap;color:#667085;font-size:14px}
+    button{width:100%;min-height:54px;border:0;border-radius:13px;background:#2563eb;color:#fff;font-size:16px;font-weight:900;cursor:pointer}
+    button:active{transform:translateY(1px)}
+    .result{margin-top:18px;padding:22px;border-radius:18px;background:#eef4ff;text-align:center}
+    .result-label{font-size:14px;color:#667085}
+    .take-home{margin-top:5px;font-size:clamp(31px,9vw,48px);font-weight:950;letter-spacing:-.04em;color:#1749b5}
+    .annual{margin-top:5px;font-size:14px;color:#667085}
+    .details{margin-top:18px;border-top:1px solid #eaecf0}
+    .row{display:flex;justify-content:space-between;gap:12px;padding:13px 2px;border-bottom:1px solid #eaecf0;font-size:14px}
+    .row span{color:#667085}.row strong{text-align:right}
+    .notice{margin:16px 2px 0;font-size:12px;line-height:1.65;color:#8a93a2}
+    @media(max-width:420px){.wrap{width:calc(100% - 18px);padding-top:16px}.card{padding:16px;border-radius:18px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="brand">FLiCK CALC</div>
+      <h1>연봉 실수령액 계산기</h1>
+      <p class="sub">연봉을 입력하면 월 예상 실수령액을 계산합니다.</p>
+    </header>
+
+    <section class="card">
+      <form id="calcForm">
+        <div class="field">
+          <label for="salary">연봉</label>
+          <div class="input-row"><input id="salary" type="number" min="0" step="10000" value="40000000" required><span class="unit">원</span></div>
+        </div>
+        <div class="field">
+          <label for="nontax">월 비과세 금액</label>
+          <div class="input-row"><input id="nontax" type="number" min="0" step="10000" value="200000"><span class="unit">원</span></div>
+        </div>
+        <div class="field">
+          <label for="dependents">부양가족 수</label>
+          <div class="input-row"><input id="dependents" type="number" min="1" max="20" step="1" value="1"><span class="unit">명</span></div>
+        </div>
+        <div class="field">
+          <label for="children">20세 이하 자녀 수</label>
+          <div class="input-row"><input id="children" type="number" min="0" max="20" step="1" value="0"><span class="unit">명</span></div>
+        </div>
+        <button type="submit">실수령액 계산하기</button>
+      </form>
+
+      <section class="result" aria-live="polite">
+        <div class="result-label">월 예상 실수령액</div>
+        <div class="take-home" id="monthlyResult">-</div>
+        <div class="annual" id="annualResult">연간 예상 실수령액 -</div>
+      </section>
+
+      <div class="details" id="details"></div>
+      <p class="notice">※ 예상 계산 결과이며 실제 급여명세서와는 비과세 항목, 공제 대상 가족, 원천징수 조건 등에 따라 차이가 날 수 있습니다. 소득세는 국세청 근로소득 간이세액표를 적용하는 방식으로 고도화할 예정입니다.</p>
+    </section>
+  </main>
+
+  <script>
+    // 금액을 한국 원화 표시 형식으로 변환합니다.
+    const won = value => Math.round(value).toLocaleString('ko-KR') + '원';
+
+    // 2026년 근로자 부담 4대보험 요율을 사용합니다.
+    function calculate(){
+      const annual = Math.max(0, Number(document.getElementById('salary').value)||0);
+      const nontax = Math.max(0, Number(document.getElementById('nontax').value)||0);
+      const dependents = Math.max(1, Math.min(20, Number(document.getElementById('dependents').value)||1));
+      const children = Math.max(0, Math.min(20, Number(document.getElementById('children').value)||0));
+
+      const gross = annual / 12;
+      const taxable = Math.max(0, gross - nontax);
+
+      // 2026년 국민연금 근로자 부담 4.75%를 적용합니다.
+      // 2026년 기준소득월액 상한 659만원을 반영합니다.
+      const pension = Math.min(taxable, 6590000) * 0.0475;
+      // 2026년 건강보험 근로자 부담 4.0674%를 적용합니다.
+      const health = taxable * 0.040674;
+      // 장기요양보험료는 건강보험료의 13.14%로 계산합니다.
+      const care = health * 0.1314;
+      // 고용보험 근로자 부담 0.9%를 적용합니다.
+      const employment = taxable * 0.009;
+
+      // 소득세는 간이 예상값입니다. 이후 국세청 간이세액표 데이터를 정확히 연결합니다.
+      const familyRate = Math.min(.45, Math.max(0,(dependents-1)*.035 + children*.02));
+      let incomeTax = Math.max(0, (taxable*.045 - 50000) * (1-familyRate));
+      incomeTax = Math.min(incomeTax, taxable*.18);
+      const localTax = incomeTax*.1;
+
+      const total = pension + health + care + employment + incomeTax + localTax;
+      const takeHome = Math.max(0, gross-total);
+
+      document.getElementById('monthlyResult').textContent = won(takeHome);
+      document.getElementById('annualResult').textContent = '연간 예상 실수령액 ' + won(takeHome*12);
+
+      const rows=[
+        ['월 급여',won(gross)],
+        ['국민연금','-'+won(pension)],
+        ['건강보험','-'+won(health)],
+        ['장기요양보험','-'+won(care)],
+        ['고용보험','-'+won(employment)],
+        ['소득세(간편 예상)','-'+won(incomeTax)],
+        ['지방소득세','-'+won(localTax)]
+      ];
+      document.getElementById('details').innerHTML=rows.map(([a,b])=>`<div class="row"><span>${a}</span><strong>${b}</strong></div>`).join('');
+    }
+
+    // 제출 버튼을 눌러도 페이지를 새로고침하지 않고 계산합니다.
+    document.getElementById('calcForm').addEventListener('submit', event=>{event.preventDefault();calculate()});
+    // 처음 접속했을 때 기본값으로 결과를 표시합니다.
+    calculate();
+  </script>
+</body>
+</html>
