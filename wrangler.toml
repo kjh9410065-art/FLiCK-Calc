@@ -1,0 +1,6 @@
+name = "flick-calc"
+compatibility_date = "2026-09-10"
+
+# Cloudflare Workers Static Assets로 public 폴더의 HTML을 그대로 배포합니다.
+[assets]
+directory = "./public"
