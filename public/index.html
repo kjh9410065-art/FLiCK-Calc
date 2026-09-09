@@ -96,8 +96,8 @@
 
       // 국민연금: 2026년 사업장가입자 본인 부담 4.75%를 적용합니다.
       // 2026년 7월부터 기준소득월액 상한 659만원, 하한 41만원을 적용합니다.
-      const pensionBase=Math.max(410000,Math.min(taxable,6590000));
-      const pension=taxable>0?pensionBase*0.0475:0;
+      const pensionBase=taxable>0?Math.max(410000,Math.min(taxable,6590000)):0;
+      const pension=pensionBase*0.0475;
       // 건강보험: 2026년 직장가입자 총 7.19%, 근로자 부담 3.595%입니다.
       const health=taxable*0.03595;
       // 장기요양보험료: 건강보험료의 13.14%를 적용합니다.
@@ -109,9 +109,7 @@
       const familyRate=Math.min(.45,Math.max(0,(dependents-1)*.035+children*.02));
       let incomeTax=Math.max(0,(taxable*.045-50000)*(1-familyRate));
       incomeTax=Math.min(incomeTax,taxable*.18);
-      // 자녀 수에 따른 원천징수액 감소분을 보조적으로 반영합니다.
-      const childCredit=children===1?12500:children===2?29160:children>=3?29160+(children-2)*25000:0;
-      incomeTax=Math.max(0,incomeTax-childCredit);
+      // 검증되지 않은 자녀 세액공제 수치는 적용하지 않습니다.
       const localTax=incomeTax*.1;
       const total=pension+health+care+employment+incomeTax+localTax;
       const takeHome=Math.max(0,gross-total);
