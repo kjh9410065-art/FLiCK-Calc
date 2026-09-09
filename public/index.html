@@ -24,7 +24,8 @@
     .quick{display:flex;gap:8px;overflow:auto;margin:-3px 0 15px;padding:2px 1px 5px;scrollbar-width:none}.quick::-webkit-scrollbar{display:none}
     .quick button{flex:0 0 auto;width:auto;min-height:38px;padding:0 12px;border:1px solid var(--border);border-radius:10px;background:var(--soft);color:var(--text);font-size:13px;font-weight:800;cursor:pointer}
     .quick button:hover{border-color:var(--primary);color:var(--primary)}
-    .calc-button{width:100%;min-height:54px;border:0;border-radius:13px;background:var(--primary);color:#fff;font-size:16px;font-weight:900;cursor:pointer}.calc-button:active,.theme-toggle:active,.quick button:active{transform:translateY(1px)}
+    .calc-button{width:100%;min-height:54px;border:0;border-radius:13px;background:var(--primary);color:#fff;font-size:16px;font-weight:900;cursor:pointer}.calc-button:active,.theme-toggle:active,.quick button:active,.tool-button:active{transform:translateY(1px)}
+    .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.tool-button{width:100%;min-height:44px;border:1px solid var(--border);border-radius:11px;background:var(--soft);color:var(--text);font-size:13px;font-weight:800;cursor:pointer}
     .result{margin-top:18px;padding:22px;border-radius:18px;background:var(--result);text-align:center}.result-label{font-size:14px;color:var(--muted)}
     .take-home{margin-top:5px;font-size:clamp(31px,9vw,48px);font-weight:950;letter-spacing:-.04em;color:var(--primary-dark)}.annual{margin-top:5px;font-size:14px;color:var(--muted)}
     .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.summary-card{padding:12px 8px;border:1px solid var(--border);border-radius:13px;background:var(--soft)}.summary-label{font-size:11px;color:var(--muted)}.summary-value{margin-top:4px;font-size:14px;font-weight:900;word-break:keep-all}
@@ -57,6 +58,10 @@
         <div class="field"><label for="children">20세 이하 자녀 수</label><div class="input-row"><input id="children" type="number" inputmode="numeric" min="0" max="20" step="1" value="0"><span class="unit" aria-hidden="true">명</span></div></div>
         <button class="calc-button" type="submit">실수령액 계산하기</button>
       </form>
+      <div class="tools">
+        <button class="tool-button" id="shareButton" type="button">🔗 계산 결과 공유</button>
+        <button class="tool-button" id="resetButton" type="button">↺ 기본값으로 초기화</button>
+      </div>
       <div class="status" id="status" role="status" aria-live="polite"></div>
       <section class="result" aria-live="polite" aria-atomic="true">
         <div class="result-label">월 예상 실수령액</div><div class="take-home" id="monthlyResult">-</div><div class="annual" id="annualResult">연간 예상 실수령액 -</div>
@@ -84,6 +89,19 @@
     // 입력값을 안전한 범위로 정규화합니다.
     function readNumber(id,min,max){const el=document.getElementById(id),value=Number(el.value);if(!Number.isFinite(value))return min;return Math.max(min,Math.min(max,value))}
 
+    // URL에 계산 조건을 저장하면 같은 조건을 다른 사람과 공유할 수 있습니다.
+    function syncUrl(){
+      const params=new URLSearchParams({salary:document.getElementById('salary').value,nontax:document.getElementById('nontax').value,dependents:document.getElementById('dependents').value,children:document.getElementById('children').value});
+      history.replaceState(null,'','?'+params.toString());
+    }
+
+    // URL로 공유된 계산 조건을 불러옵니다.
+    function loadFromUrl(){
+      const params=new URLSearchParams(location.search);
+      ['salary','nontax','dependents','children'].forEach(id=>{if(params.has(id))document.getElementById(id).value=params.get(id)});
+    }
+    loadFromUrl();
+
     // 2026년 근로자 부담 보험료를 계산합니다.
     function calculate(){
       const annual=readNumber('salary',0,1000000000),nontax=readNumber('nontax',0,annual/12),dependents=Math.round(readNumber('dependents',1,20)),children=Math.round(readNumber('children',0,20));
@@ -104,13 +122,31 @@
       document.getElementById('monthlyResult').textContent=won(takeHome);document.getElementById('annualResult').textContent='연간 예상 실수령액 '+won(takeHome*12);
       document.getElementById('grossSummary').textContent=won(gross);document.getElementById('deductionSummary').textContent=won(total);document.getElementById('rateSummary').textContent=rate.toFixed(1)+'%';
       const rows=[['월 급여',won(gross)],['국민연금','-'+won(pension)],['건강보험','-'+won(health)],['장기요양보험','-'+won(care)],['고용보험','-'+won(employment)],['소득세(간편 예상)','-'+won(incomeTax)],['지방소득세','-'+won(localTax)]];
-      document.getElementById('details').innerHTML=rows.map(([a,b])=>`<div class="row"><span>${a}</span><strong>${b}</strong></div>`).join('');status.textContent='입력값을 기준으로 자동 계산됨';
+      document.getElementById('details').innerHTML=rows.map(([a,b])=>`<div class="row"><span>${a}</span><strong>${b}</strong></div>`).join('');
+      syncUrl();
+      status.textContent='입력값을 기준으로 자동 계산됨';
     }
 
     // 빠른 연봉 버튼은 입력값을 바꾸고 즉시 다시 계산합니다.
     document.querySelectorAll('[data-salary]').forEach(button=>button.addEventListener('click',()=>{document.getElementById('salary').value=button.dataset.salary;calculate();document.getElementById('salary').focus()}));
     document.getElementById('calcForm').addEventListener('submit',event=>{event.preventDefault();calculate()});
     ['salary','nontax','dependents','children'].forEach(id=>document.getElementById(id).addEventListener('input',calculate));
+
+    // 현재 계산 조건이 담긴 URL을 공유하거나 클립보드에 복사합니다.
+    document.getElementById('shareButton').addEventListener('click',async()=>{
+      syncUrl();
+      const shareData={title:'FLiCK Calc - 연봉 실수령액 계산',text:'내 연봉 실수령액 계산 결과를 확인해보세요.',url:location.href};
+      try{
+        if(navigator.share){await navigator.share(shareData);status.textContent='공유 창을 열었습니다.'}
+        else{await navigator.clipboard.writeText(location.href);status.textContent='계산 결과 링크를 복사했습니다.'}
+      }catch(error){if(error&&error.name!=='AbortError')status.textContent='공유에 실패했습니다. 다시 시도해주세요.'}
+    });
+
+    // 모든 입력값을 처음 기본값으로 되돌립니다.
+    document.getElementById('resetButton').addEventListener('click',()=>{
+      document.getElementById('salary').value='40000000';document.getElementById('nontax').value='200000';document.getElementById('dependents').value='1';document.getElementById('children').value='0';calculate();status.textContent='기본값으로 초기화했습니다.';
+    });
+
     calculate();
   </script>
 </body>
