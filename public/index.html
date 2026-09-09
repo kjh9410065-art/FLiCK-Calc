@@ -7,8 +7,8 @@
   <title>FLiCK Calc - 연봉 실수령액 계산기</title>
   <meta name="description" content="연봉을 입력하면 2026년 기준 예상 월 실수령액을 계산하는 FLiCK Calc입니다.">
   <style>
-    :root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--input:#fff;--input-border:#d0d5dd;--primary:#2563eb;--primary-dark:#1749b5;--result:#eef4ff;--line:#eaecf0;--shadow:rgba(16,24,40,.06)}
-    html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--input:#11141a;--input-border:#3b424f;--primary:#4f8cff;--primary-dark:#8db3ff;--result:#182846;--line:#2b303a;--shadow:rgba(0,0,0,.28)}
+    :root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--input:#fff;--input-border:#d0d5dd;--primary:#2563eb;--primary-dark:#1749b5;--result:#eef4ff;--line:#eaecf0;--shadow:rgba(16,24,40,.06);--soft:#f8fafc}
+    html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--input:#11141a;--input-border:#3b424f;--primary:#4f8cff;--primary-dark:#8db3ff;--result:#182846;--line:#2b303a;--shadow:rgba(0,0,0,.28);--soft:#11141a}
     *{box-sizing:border-box}html{background:var(--bg)}
     body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif;transition:background .2s,color .2s}
     .wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:24px 0 48px}
@@ -20,13 +20,18 @@
     input{width:100%;min-height:50px;border:1px solid var(--input-border);border-radius:12px;padding:0 14px;font-size:16px;outline:0;background:var(--input);color:var(--text)}
     input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
     button:focus-visible,input:focus-visible{outline:3px solid rgba(37,99,235,.35);outline-offset:2px}
-    .unit{white-space:nowrap;color:var(--muted);font-size:14px}.calc-button{width:100%;min-height:54px;border:0;border-radius:13px;background:var(--primary);color:#fff;font-size:16px;font-weight:900;cursor:pointer}.calc-button:active,.theme-toggle:active{transform:translateY(1px)}
+    .unit{white-space:nowrap;color:var(--muted);font-size:14px}
+    .quick{display:flex;gap:8px;overflow:auto;margin:-3px 0 15px;padding:2px 1px 5px;scrollbar-width:none}.quick::-webkit-scrollbar{display:none}
+    .quick button{flex:0 0 auto;width:auto;min-height:38px;padding:0 12px;border:1px solid var(--border);border-radius:10px;background:var(--soft);color:var(--text);font-size:13px;font-weight:800;cursor:pointer}
+    .quick button:hover{border-color:var(--primary);color:var(--primary)}
+    .calc-button{width:100%;min-height:54px;border:0;border-radius:13px;background:var(--primary);color:#fff;font-size:16px;font-weight:900;cursor:pointer}.calc-button:active,.theme-toggle:active,.quick button:active{transform:translateY(1px)}
     .result{margin-top:18px;padding:22px;border-radius:18px;background:var(--result);text-align:center}.result-label{font-size:14px;color:var(--muted)}
     .take-home{margin-top:5px;font-size:clamp(31px,9vw,48px);font-weight:950;letter-spacing:-.04em;color:var(--primary-dark)}.annual{margin-top:5px;font-size:14px;color:var(--muted)}
+    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.summary-card{padding:12px 8px;border:1px solid var(--border);border-radius:13px;background:var(--soft)}.summary-label{font-size:11px;color:var(--muted)}.summary-value{margin-top:4px;font-size:14px;font-weight:900;word-break:keep-all}
     .details{margin-top:18px;border-top:1px solid var(--line)}.row{display:flex;justify-content:space-between;gap:12px;padding:13px 2px;border-bottom:1px solid var(--line);font-size:14px}.row span{color:var(--muted)}.row strong{text-align:right}
-    .notice{margin:16px 2px 0;font-size:12px;line-height:1.65;color:var(--muted)}
-    .status{min-height:18px;margin:8px 2px 0;font-size:12px;color:var(--muted);text-align:center}
-    @media(max-width:420px){.wrap{width:calc(100% - 18px);padding-top:16px}.card{padding:16px;border-radius:18px}.theme-toggle{position:relative;top:auto;right:auto;margin-top:14px}}
+    .notice{margin:16px 2px 0;font-size:12px;line-height:1.65;color:var(--muted)}.status{min-height:18px;margin:8px 2px 0;font-size:12px;color:var(--muted);text-align:center}
+    @media(max-width:520px){.summary-value{font-size:13px}}
+    @media(max-width:420px){.wrap{width:calc(100% - 18px);padding-top:16px}.card{padding:16px;border-radius:18px}.theme-toggle{position:relative;top:auto;right:auto;margin-top:14px}.summary{gap:6px}.summary-card{padding:11px 5px}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
   </style>
 </head>
@@ -36,92 +41,74 @@
       <div class="brand">FLiCK CALC</div>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="다크 모드 전환">🌙 다크모드</button>
       <h1>연봉 실수령액 계산기</h1>
-      <p class="sub">연봉을 입력하면 월 예상 실수령액을 계산합니다.</p>
+      <p class="sub">연봉을 입력하면 월 예상 실수령액을 바로 확인할 수 있습니다.</p>
     </header>
     <section class="card" aria-label="연봉 실수령액 계산 입력">
       <form id="calcForm" autocomplete="off">
-        <div class="field"><label for="salary">연봉</label><div class="input-row"><input id="salary" type="number" inputmode="numeric" min="0" step="10000" value="40000000" required><span class="unit" aria-hidden="true">원</span></div></div>
+        <div class="field">
+          <label for="salary">연봉</label>
+          <div class="input-row"><input id="salary" type="number" inputmode="numeric" min="0" step="10000" value="40000000" required><span class="unit" aria-hidden="true">원</span></div>
+        </div>
+        <div class="quick" aria-label="연봉 빠른 선택">
+          <button type="button" data-salary="30000000">3천만원</button><button type="button" data-salary="40000000">4천만원</button><button type="button" data-salary="50000000">5천만원</button><button type="button" data-salary="60000000">6천만원</button><button type="button" data-salary="70000000">7천만원</button>
+        </div>
         <div class="field"><label for="nontax">월 비과세 금액</label><div class="input-row"><input id="nontax" type="number" inputmode="numeric" min="0" step="10000" value="200000"><span class="unit" aria-hidden="true">원</span></div></div>
         <div class="field"><label for="dependents">부양가족 수</label><div class="input-row"><input id="dependents" type="number" inputmode="numeric" min="1" max="20" step="1" value="1"><span class="unit" aria-hidden="true">명</span></div></div>
         <div class="field"><label for="children">20세 이하 자녀 수</label><div class="input-row"><input id="children" type="number" inputmode="numeric" min="0" max="20" step="1" value="0"><span class="unit" aria-hidden="true">명</span></div></div>
         <button class="calc-button" type="submit">실수령액 계산하기</button>
       </form>
       <div class="status" id="status" role="status" aria-live="polite"></div>
-      <section class="result" aria-live="polite" aria-atomic="true"><div class="result-label">월 예상 실수령액</div><div class="take-home" id="monthlyResult">-</div><div class="annual" id="annualResult">연간 예상 실수령액 -</div></section>
+      <section class="result" aria-live="polite" aria-atomic="true">
+        <div class="result-label">월 예상 실수령액</div><div class="take-home" id="monthlyResult">-</div><div class="annual" id="annualResult">연간 예상 실수령액 -</div>
+      </section>
+      <div class="summary" aria-label="계산 요약">
+        <div class="summary-card"><div class="summary-label">월 급여</div><div class="summary-value" id="grossSummary">-</div></div>
+        <div class="summary-card"><div class="summary-label">월 공제액</div><div class="summary-value" id="deductionSummary">-</div></div>
+        <div class="summary-card"><div class="summary-label">실수령 비율</div><div class="summary-value" id="rateSummary">-</div></div>
+      </div>
       <div class="details" id="details" aria-label="공제 내역"></div>
-      <p class="notice">※ 예상 계산 결과이며 실제 급여명세서와는 비과세 항목, 공제 대상 가족, 원천징수 조건 등에 따라 차이가 날 수 있습니다. 국민연금은 2026년 7월부터 적용되는 기준소득월액 상·하한을 반영합니다. 소득세는 국세청 근로소득 간이세액표 기준으로 계속 고도화합니다.</p>
+      <p class="notice">※ 예상 계산 결과이며 실제 급여명세서와는 비과세 항목, 공제 대상 가족, 원천징수 조건 등에 따라 차이가 날 수 있습니다. 국민연금은 2026년 7월부터 적용되는 기준소득월액 상·하한을 반영합니다. 소득세는 국세청 근로소득 간이세액표를 기준으로 정확도를 계속 개선합니다.</p>
     </section>
   </main>
   <script>
     // 금액을 한국 원화 표시 형식으로 변환합니다.
     const won=value=>Math.round(value).toLocaleString('ko-KR')+'원';
-    const root=document.documentElement;
-    const themeToggle=document.getElementById('themeToggle');
-    const status=document.getElementById('status');
-
-    // 저장된 테마가 있으면 우선 적용하고, 없으면 기기의 시스템 설정을 따릅니다.
+    const root=document.documentElement,themeToggle=document.getElementById('themeToggle'),status=document.getElementById('status');
     const savedTheme=localStorage.getItem('flick-theme');
     if(savedTheme==='dark'||(!savedTheme&&window.matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
 
-    // 브라우저 상단 주소창 색상도 현재 테마에 맞춥니다.
-    function updateThemeButton(){
-      const isDark=root.classList.contains('dark');
-      themeToggle.textContent=isDark?'☀️ 라이트모드':'🌙 다크모드';
-      themeToggle.setAttribute('aria-label',isDark?'라이트 모드 전환':'다크 모드 전환');
-      document.querySelector('meta[name="theme-color"]').setAttribute('content',isDark?'#0f1115':'#f5f7fb');
-    }
-    themeToggle.addEventListener('click',()=>{
-      const isDark=root.classList.toggle('dark');
-      localStorage.setItem('flick-theme',isDark?'dark':'light');
-      updateThemeButton();
-    });
-    updateThemeButton();
+    // 현재 테마에 맞춰 버튼과 모바일 브라우저 상단 색상을 바꿉니다.
+    function updateThemeButton(){const isDark=root.classList.contains('dark');themeToggle.textContent=isDark?'☀️ 라이트모드':'🌙 다크모드';themeToggle.setAttribute('aria-label',isDark?'라이트 모드 전환':'다크 모드 전환');document.querySelector('meta[name="theme-color"]').setAttribute('content',isDark?'#0f1115':'#f5f7fb')}
+    themeToggle.addEventListener('click',()=>{const isDark=root.classList.toggle('dark');localStorage.setItem('flick-theme',isDark?'dark':'light');updateThemeButton()});updateThemeButton();
 
     // 입력값을 안전한 범위로 정규화합니다.
-    function readNumber(id,min,max){
-      const el=document.getElementById(id);
-      const value=Number(el.value);
-      if(!Number.isFinite(value))return min;
-      return Math.max(min,Math.min(max,value));
-    }
+    function readNumber(id,min,max){const el=document.getElementById(id),value=Number(el.value);if(!Number.isFinite(value))return min;return Math.max(min,Math.min(max,value))}
 
     // 2026년 근로자 부담 보험료를 계산합니다.
     function calculate(){
-      const annual=readNumber('salary',0,1000000000);
-      const nontax=readNumber('nontax',0,annual/12);
-      const dependents=Math.round(readNumber('dependents',1,20));
-      const children=Math.round(readNumber('children',0,20));
-      const gross=annual/12;
-      const taxable=Math.max(0,gross-nontax);
-
-      // 국민연금: 2026년 사업장가입자 본인 부담 4.75%를 적용합니다.
-      // 2026년 7월부터 기준소득월액 상한 659만원, 하한 41만원을 적용합니다.
-      const pensionBase=taxable>0?Math.max(410000,Math.min(taxable,6590000)):0;
-      const pension=pensionBase*0.0475;
+      const annual=readNumber('salary',0,1000000000),nontax=readNumber('nontax',0,annual/12),dependents=Math.round(readNumber('dependents',1,20)),children=Math.round(readNumber('children',0,20));
+      const gross=annual/12,taxable=Math.max(0,gross-nontax);
+      // 국민연금: 2026년 사업장가입자 본인 부담 4.75%, 2026년 7월부터 기준소득월액 상한 659만원을 적용합니다.
+      const pensionBase=taxable>0?Math.max(410000,Math.min(taxable,6590000)):0,pension=pensionBase*0.0475;
       // 건강보험: 2026년 직장가입자 총 7.19%, 근로자 부담 3.595%입니다.
       const health=taxable*0.03595;
       // 장기요양보험료: 건강보험료의 13.14%를 적용합니다.
       const care=health*0.1314;
       // 고용보험: 근로자 부담 0.9%를 적용합니다.
       const employment=taxable*0.009;
-
-      // 소득세는 현재 간편 예상식입니다. 공식 간이세액표를 확보하기 전에는 과도한 정밀성을 주장하지 않습니다.
+      // 소득세는 현재 간편 예상식입니다. 공식 간이세액표 확보 전에는 과도한 정밀성을 주장하지 않습니다.
       const familyRate=Math.min(.45,Math.max(0,(dependents-1)*.035+children*.02));
-      let incomeTax=Math.max(0,(taxable*.045-50000)*(1-familyRate));
-      incomeTax=Math.min(incomeTax,taxable*.18);
+      let incomeTax=Math.max(0,(taxable*.045-50000)*(1-familyRate));incomeTax=Math.min(incomeTax,taxable*.18);
       // 검증되지 않은 자녀 세액공제 수치는 적용하지 않습니다.
-      const localTax=incomeTax*.1;
-      const total=pension+health+care+employment+incomeTax+localTax;
-      const takeHome=Math.max(0,gross-total);
-
-      document.getElementById('monthlyResult').textContent=won(takeHome);
-      document.getElementById('annualResult').textContent='연간 예상 실수령액 '+won(takeHome*12);
+      const localTax=incomeTax*.1,total=pension+health+care+employment+incomeTax+localTax,takeHome=Math.max(0,gross-total),rate=gross>0?(takeHome/gross*100):0;
+      document.getElementById('monthlyResult').textContent=won(takeHome);document.getElementById('annualResult').textContent='연간 예상 실수령액 '+won(takeHome*12);
+      document.getElementById('grossSummary').textContent=won(gross);document.getElementById('deductionSummary').textContent=won(total);document.getElementById('rateSummary').textContent=rate.toFixed(1)+'%';
       const rows=[['월 급여',won(gross)],['국민연금','-'+won(pension)],['건강보험','-'+won(health)],['장기요양보험','-'+won(care)],['고용보험','-'+won(employment)],['소득세(간편 예상)','-'+won(incomeTax)],['지방소득세','-'+won(localTax)]];
-      document.getElementById('details').innerHTML=rows.map(([a,b])=>`<div class="row"><span>${a}</span><strong>${b}</strong></div>`).join('');
-      status.textContent='입력값을 기준으로 자동 계산됨';
+      document.getElementById('details').innerHTML=rows.map(([a,b])=>`<div class="row"><span>${a}</span><strong>${b}</strong></div>`).join('');status.textContent='입력값을 기준으로 자동 계산됨';
     }
 
-    // 버튼 제출과 입력값 변경 모두 같은 계산 함수를 사용합니다.
+    // 빠른 연봉 버튼은 입력값을 바꾸고 즉시 다시 계산합니다.
+    document.querySelectorAll('[data-salary]').forEach(button=>button.addEventListener('click',()=>{document.getElementById('salary').value=button.dataset.salary;calculate();document.getElementById('salary').focus()}));
     document.getElementById('calcForm').addEventListener('submit',event=>{event.preventDefault();calculate()});
     ['salary','nontax','dependents','children'].forEach(id=>document.getElementById(id).addEventListener('input',calculate));
     calculate();
