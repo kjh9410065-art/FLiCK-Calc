@@ -1,0 +1,3 @@
+# FLiCK Calc 검색엔진 크롤링 정책
+User-agent: *
+Allow: /
