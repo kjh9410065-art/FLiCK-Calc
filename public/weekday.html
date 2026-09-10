@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>요일 계산기 - FLiCK Calc</title>
+<meta name="description" content="날짜를 입력하면 해당 날짜의 요일을 간단하게 확인할 수 있습니다.">
+<link rel="canonical" href="https://flick-calc.carpick.workers.dev/weekday.html">
+<meta property="og:title" content="요일 계산기 - FLiCK Calc">
+<meta property="og:description" content="날짜를 입력하면 해당 날짜의 요일을 계산합니다.">
+<meta property="og:url" content="https://flick-calc.carpick.workers.dev/weekday.html">
+<style>
+:root{color-scheme:light dark;--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#697386;--line:#dfe4ec;--accent:#4f46e5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:560px;margin:0 auto;padding:24px 16px 40px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}a{color:inherit}.back{text-decoration:none;font-size:14px;color:var(--muted)}
+h1{font-size:28px;margin:0 0 8px}.sub{color:var(--muted);margin:0 0 20px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 6px 20px rgba(0,0,0,.05)}
+label{display:block;font-weight:700;margin-bottom:8px}input{width:100%;padding:14px;border:1px solid var(--line);border-radius:12px;background:transparent;color:inherit;font-size:16px}button{width:100%;margin-top:14px;padding:14px;border:0;border-radius:12px;background:var(--accent);color:#fff;font-size:16px;font-weight:700;cursor:pointer}
+.result{margin-top:18px;padding:20px;border-radius:14px;background:rgba(79,70,229,.08);text-align:center}.result strong{display:block;font-size:32px}.detail{margin-top:8px;color:var(--muted);font-size:14px}.links{display:flex;gap:10px;margin-top:18px}.links a{flex:1;text-align:center;padding:12px;border:1px solid var(--line);border-radius:12px;text-decoration:none;font-size:14px}.notice{margin-top:16px;color:var(--muted);font-size:13px;line-height:1.6}
+@media(prefers-color-scheme:dark){:root{--bg:#101318;--card:#181c23;--text:#f2f4f8;--muted:#a4adbd;--line:#303744}.card{box-shadow:none}}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><strong>FLiCK Calc</strong><a class="back" href="/calculator-list.html">계산기 목록</a></div>
+<h1>요일 계산기</h1>
+<p class="sub">날짜를 입력하면 해당 날짜의 요일을 계산합니다.</p>
+<section class="card">
+<label for="date">날짜</label>
+<input id="date" type="date">
+<button id="reset" type="button">초기화</button>
+<div class="result"><strong id="result">요일</strong><div id="detail" class="detail">날짜를 입력하면 계산합니다.</div></div>
+<div class="links"><a href="/date-difference.html">날짜 차이 계산기</a><a href="/date-add.html">날짜 더하기·빼기</a></div>
+<p class="notice">입력한 날짜 자체의 요일을 계산합니다. 날짜 처리 과정에서 시간대 영향을 줄이기 위해 UTC 기준으로 계산합니다.</p>
+</section>
+</main>
+<script>
+const date=document.getElementById('date');
+const result=document.getElementById('result');
+const detail=document.getElementById('detail');
+const reset=document.getElementById('reset');
+const weekdays=['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
+function calculate(){
+  // 날짜 문자열을 UTC 날짜로 변환해 지역 시간대/DST에 따른 요일 오차를 막습니다.
+  if(!date.value){result.textContent='요일';detail.textContent='날짜를 입력하면 계산합니다.';return}
+  const [y,m,d]=date.value.split('-').map(Number);
+  const day=new Date(Date.UTC(y,m-1,d));
+  result.textContent=weekdays[day.getUTCDay()];
+  detail.textContent=`${y}년 ${m}월 ${d}일은 ${weekdays[day.getUTCDay()]}입니다.`;
+}
+date.addEventListener('input',calculate);
+reset.addEventListener('click',()=>{
+  // 초기화하면 입력값과 결과를 기본 상태로 되돌립니다.
+  date.value='';
+  history.replaceState(null,'',location.pathname);
+  calculate();
+});
+calculate();
+</script>
+</body>
+</html>
