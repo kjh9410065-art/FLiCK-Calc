@@ -64,11 +64,11 @@
     function themeText(){ $('theme').textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'; }
     $('theme').addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');themeText()});themeText();
     function num(id,min){const v=Number($(id).value);return Number.isFinite(v)?Math.max(min,v):min;}
-    function calculate(){const pay=num('pay',0),days3=num('days3',1),service=num('service',0);const daily=pay/days3;const thirty=daily*30;const severance=thirty*service/365;$('daily').textContent=won(daily);$('thirty').textContent=won(thirty);$('result').textContent=won(severance);const p=new URLSearchParams({pay:Math.round(pay),days3:Math.round(days3),service:Math.round(service)});history.replaceState(null,'','?'+p.toString());}
+    function calculate(updateUrl=true){const pay=num('pay',0),days3=num('days3',1),service=num('service',0);const daily=pay/days3;const thirty=daily*30;const severance=thirty*service/365;$('daily').textContent=won(daily);$('thirty').textContent=won(thirty);$('result').textContent=won(severance);if(updateUrl){const p=new URLSearchParams({pay:Math.round(pay),days3:Math.round(days3),service:Math.round(service)});history.replaceState(null,'','?'+p.toString());}}
     const params=new URLSearchParams(location.search);['pay','days3','service'].forEach(id=>{if(params.has(id))$(id).value=params.get(id)});
     $('form').addEventListener('submit',e=>{e.preventDefault();calculate();$('status').textContent='계산이 완료되었습니다.';});
     $('share').addEventListener('click',async()=>{calculate();try{if(navigator.share){await navigator.share({title:'FLiCK Calc - 퇴직금 계산기',url:location.href});}else{await navigator.clipboard.writeText(location.href);$('status').textContent='계산 링크를 복사했습니다.';}}catch(e){}});
-    $('reset').addEventListener('click',()=>{ $('pay').value=10000000;$('days3').value=91;$('service').value=3650;history.replaceState(null,'',location.pathname);calculate();$('status').textContent='기본값으로 초기화했습니다.'; });
+    $('reset').addEventListener('click',()=>{ $('pay').value=10000000;$('days3').value=91;$('service').value=3650;history.replaceState(null,'',location.pathname);calculate(false);$('status').textContent='기본값으로 초기화했습니다.'; });
     calculate();
   </script>
 </body>
