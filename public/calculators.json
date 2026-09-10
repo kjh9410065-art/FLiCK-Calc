@@ -48,6 +48,14 @@
       "category": "금융·저축",
       "description": "예금과 적금의 예상 이자와 만기 금액을 계산합니다.",
       "status": "active"
+    },
+    {
+      "id": "vat",
+      "name": "부가세 계산기",
+      "url": "/vat.html",
+      "category": "세금·사업",
+      "description": "공급가액 또는 부가세 포함 금액을 기준으로 부가세를 계산합니다.",
+      "status": "active"
     }
   ]
 }
