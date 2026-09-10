@@ -1,61 +1,13 @@
 {
   "brand": "FLiCK Calc",
   "calculators": [
-    {
-      "id": "salary",
-      "name": "연봉 실수령액 계산기",
-      "url": "/salary.html",
-      "category": "직장·급여",
-      "description": "연봉을 입력하면 월 예상 실수령액을 확인할 수 있습니다.",
-      "status": "active"
-    },
-    {
-      "id": "retirement",
-      "name": "퇴직금 계산기",
-      "url": "/retirement.html",
-      "category": "직장·급여",
-      "description": "평균임금과 근속기간을 기준으로 예상 퇴직금을 계산합니다.",
-      "status": "active"
-    },
-    {
-      "id": "annual-leave",
-      "name": "연차수당 계산기",
-      "url": "/annual-leave.html",
-      "category": "직장·급여",
-      "description": "월 통상임금과 미사용 연차를 기준으로 예상 연차수당을 계산합니다.",
-      "status": "active"
-    },
-    {
-      "id": "weekly-holiday-pay",
-      "name": "주휴수당 계산기",
-      "url": "/weekly-holiday-pay.html",
-      "category": "직장·급여",
-      "description": "주 소정근로시간과 시급을 기준으로 예상 주휴수당을 계산합니다.",
-      "status": "active"
-    },
-    {
-      "id": "loan",
-      "name": "대출이자 계산기",
-      "url": "/loan.html",
-      "category": "금융·대출",
-      "description": "대출 원금과 금리, 기간으로 월 상환액과 총 이자를 계산합니다.",
-      "status": "active"
-    },
-    {
-      "id": "deposit-savings",
-      "name": "예금·적금 계산기",
-      "url": "/deposit-savings.html",
-      "category": "금융·저축",
-      "description": "예금과 적금의 예상 이자와 만기 금액을 계산합니다.",
-      "status": "active"
-    },
-    {
-      "id": "vat",
-      "name": "부가세 계산기",
-      "url": "/vat.html",
-      "category": "세금·사업",
-      "description": "공급가액 또는 부가세 포함 금액을 기준으로 부가세를 계산합니다.",
-      "status": "active"
-    }
+    {"id":"salary","name":"연봉 실수령액 계산기","url":"/salary.html","category":"직장·급여","description":"연봉을 입력하면 월 예상 실수령액을 확인할 수 있습니다.","status":"active"},
+    {"id":"retirement","name":"퇴직금 계산기","url":"/retirement.html","category":"직장·급여","description":"평균임금과 근속기간을 기준으로 예상 퇴직금을 계산합니다.","status":"active"},
+    {"id":"annual-leave","name":"연차수당 계산기","url":"/annual-leave.html","category":"직장·급여","description":"월 통상임금과 미사용 연차를 기준으로 예상 연차수당을 계산합니다.","status":"active"},
+    {"id":"weekly-holiday-pay","name":"주휴수당 계산기","url":"/weekly-holiday-pay.html","category":"직장·급여","description":"주 소정근로시간과 시급을 기준으로 예상 주휴수당을 계산합니다.","status":"active"},
+    {"id":"loan","name":"대출이자 계산기","url":"/loan.html","category":"금융·대출","description":"대출 원금과 금리, 기간으로 월 상환액과 총 이자를 계산합니다.","status":"active"},
+    {"id":"deposit-savings","name":"예금·적금 계산기","url":"/deposit-savings.html","category":"금융·저축","description":"예금과 적금의 예상 이자와 만기 금액을 계산합니다.","status":"active"},
+    {"id":"vat","name":"부가세 계산기","url":"/vat.html","category":"세금·사업","description":"공급가액 또는 부가세 포함 금액을 기준으로 부가세를 계산합니다.","status":"active"},
+    {"id":"percent","name":"퍼센트 계산기","url":"/percent.html","category":"수학·비율","description":"퍼센트, 비율, 증감률, 증가·감소 후 금액을 계산합니다.","status":"active"}
   ]
 }
