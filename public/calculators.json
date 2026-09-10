@@ -16,6 +16,14 @@
       "category": "직장·급여",
       "description": "평균임금과 근속기간을 기준으로 예상 퇴직금을 계산합니다.",
       "status": "active"
+    },
+    {
+      "id": "annual-leave",
+      "name": "연차수당 계산기",
+      "url": "/annual-leave.html",
+      "category": "직장·급여",
+      "description": "월 통상임금과 미사용 연차를 기준으로 예상 연차수당을 계산합니다.",
+      "status": "active"
     }
   ]
 }
