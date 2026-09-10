@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>부가세 계산기 | FLiCK Calc</title>
+  <meta name="description" content="공급가액 또는 부가세 포함 금액을 입력해 부가세와 합계금액을 계산합니다.">
+  <link rel="canonical" href="https://flick-calc.carpick.workers.dev/vat.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="부가세 계산기 | FLiCK Calc">
+  <meta property="og:description" content="공급가액 또는 부가세 포함 금액을 입력해 부가세와 합계금액을 계산합니다.">
+  <meta property="og:url" content="https://flick-calc.carpick.workers.dev/vat.html">
+  <style>
+    :root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--primary:#2563eb;--soft:#f8fafc}
+    html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--primary:#4f8cff;--soft:#11141a}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}.theme{border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--text);padding:9px 13px;font-weight:800;cursor:pointer}h1{margin:18px 0 7px;font-size:clamp(30px,8vw,42px)}.sub{margin:0 0 22px;color:var(--muted);font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:12px}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}.tab{border:1px solid var(--border);border-radius:12px;background:var(--soft);color:var(--text);padding:12px 8px;font-weight:800;cursor:pointer}.tab.active{background:var(--primary);border-color:var(--primary);color:#fff}.field{margin-bottom:14px}.field label{display:block;margin-bottom:7px;font-size:13px;font-weight:800}.field input{width:100%;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--soft);color:var(--text);font-size:16px;outline:none}.field input:focus{border-color:var(--primary)}.unit{margin-top:5px;color:var(--muted);font-size:12px}.result{margin-top:18px;padding:17px;border-radius:14px;background:var(--soft);border:1px solid var(--border)}.row{display:flex;justify-content:space-between;gap:16px;padding:7px 0;font-size:14px}.row strong{font-size:16px}.row.total{border-top:1px solid var(--border);margin-top:5px;padding-top:13px;font-weight:900}.notice{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.65}.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.links a{text-decoration:none;color:var(--primary);font-size:13px;font-weight:800}.hidden{display:none}.calc{width:100%;border:0;border-radius:12px;background:var(--primary);color:#fff;padding:14px;font-size:16px;font-weight:900;cursor:pointer}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="top"><div class="brand">FLiCK CALC</div><button class="theme" id="theme" type="button">🌙 다크모드</button></div>
+    <h1>부가세 계산기</h1>
+    <p class="sub">일반적인 부가가치세 10% 기준으로 공급가액과 부가세를 간편하게 계산합니다.</p>
+
+    <section class="card">
+      <div class="tabs" role="tablist" aria-label="계산 방식">
+        <button class="tab active" id="supplyTab" type="button">공급가액 기준</button>
+        <button class="tab" id="totalTab" type="button">합계금액 기준</button>
+      </div>
+
+      <div id="supplyMode">
+        <div class="field">
+          <label for="supply">공급가액</label>
+          <input id="supply" type="number" inputmode="numeric" min="0" step="100" value="100000">
+          <div class="unit">원</div>
+        </div>
+      </div>
+
+      <div id="totalMode" class="hidden">
+        <div class="field">
+          <label for="totalInput">부가세 포함 합계금액</label>
+          <input id="totalInput" type="number" inputmode="numeric" min="0" step="100" value="110000">
+          <div class="unit">원</div>
+        </div>
+      </div>
+
+      <button class="calc" id="calculate" type="button">계산하기</button>
+
+      <div class="result" aria-live="polite">
+        <div class="row"><span>공급가액</span><strong id="resultSupply">100,000원</strong></div>
+        <div class="row"><span>부가세 (10%)</span><strong id="resultVat">10,000원</strong></div>
+        <div class="row total"><span>합계금액</span><strong id="resultTotal">110,000원</strong></div>
+      </div>
+
+      <p class="notice">국세청 일반과세자의 기본 세율 10%를 기준으로 한 단순 계산입니다. 실제 부가가치세 신고·납부액은 매입세액 공제 여부, 세금계산서, 공제·불공제 항목 등에 따라 달라질 수 있습니다.</p>
+    </section>
+
+    <div class="links"><a href="/calculator-list.html">← 계산기 목록</a><a href="/salary.html">연봉 실수령액 계산기</a></div>
+  </main>
+
+  <script>
+    // 저장된 테마가 있으면 적용하고, 없으면 기기 설정을 따릅니다.
+    const root=document.documentElement,theme=document.getElementById('theme'),savedTheme=localStorage.getItem('flick-theme');
+    if(savedTheme==='dark'||(!savedTheme&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
+    function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}
+    theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
+
+    // 공급가액 기준과 합계금액 기준의 입력 화면을 전환합니다.
+    const supplyTab=document.getElementById('supplyTab'),totalTab=document.getElementById('totalTab');
+    const supplyMode=document.getElementById('supplyMode'),totalMode=document.getElementById('totalMode');
+    let mode='supply';
+    function setMode(next){mode=next;const isSupply=mode==='supply';supplyTab.classList.toggle('active',isSupply);totalTab.classList.toggle('active',!isSupply);supplyMode.classList.toggle('hidden',!isSupply);totalMode.classList.toggle('hidden',isSupply);calculate()}
+    supplyTab.addEventListener('click',()=>setMode('supply'));totalTab.addEventListener('click',()=>setMode('total'));
+
+    // 숫자를 원화 표기 형태로 바꿉니다.
+    const money=n=>Math.round(n).toLocaleString('ko-KR')+'원';
+    const supply=document.getElementById('supply'),totalInput=document.getElementById('totalInput');
+    const resultSupply=document.getElementById('resultSupply'),resultVat=document.getElementById('resultVat'),resultTotal=document.getElementById('resultTotal');
+
+    // 일반과세자 기본 세율 10%를 적용해 결과를 계산합니다.
+    function calculate(){
+      const input=Math.max(0,Number(mode==='supply'?supply.value:totalInput.value)||0);
+      let supplyAmount,vatAmount,totalAmount;
+      if(mode==='supply'){
+        supplyAmount=input;vatAmount=supplyAmount*0.10;totalAmount=supplyAmount+vatAmount;
+      }else{
+        totalAmount=input;supplyAmount=totalAmount/1.10;vatAmount=totalAmount-supplyAmount;
+      }
+      resultSupply.textContent=money(supplyAmount);resultVat.textContent=money(vatAmount);resultTotal.textContent=money(totalAmount);
+    }
+    document.getElementById('calculate').addEventListener('click',calculate);
+    supply.addEventListener('input',calculate);totalInput.addEventListener('input',calculate);calculate();
+  </script>
+</body>
+</html>
