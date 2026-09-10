@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>종합소득세 계산기 | FLiCK Calc</title>
+<meta name="description" content="종합소득 과세표준을 입력하면 국세청 기본세율을 기준으로 산출세액을 간편하게 계산합니다.">
+<link rel="canonical" href="https://flick-calc.carpick.workers.dev/income-tax.html">
+<meta property="og:type" content="website"><meta property="og:title" content="종합소득세 계산기 | FLiCK Calc"><meta property="og:description" content="종합소득 과세표준을 입력하면 기본세율을 기준으로 산출세액을 계산합니다."><meta property="og:url" content="https://flick-calc.carpick.workers.dev/income-tax.html">
+<style>
+:root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#d9dee8;--primary:#2563eb}
+html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#353b47;--primary:#4f8cff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.tools{display:flex;justify-content:flex-end}.theme,.btn,.link{border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);padding:11px 14px;font-weight:800;cursor:pointer}.brand{margin-top:22px;font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}h1{margin:10px 0 7px;font-size:clamp(30px,8vw,42px)}.sub{margin:0 0 22px;color:var(--muted);font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px}.field label{display:block;margin-bottom:7px;font-size:13px;font-weight:900}.field input{width:100%;padding:14px;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font-size:16px}.result{margin-top:16px;padding:18px;border-radius:14px;background:var(--bg);border:1px solid var(--border)}.row{display:flex;justify-content:space-between;gap:12px;padding:8px 0}.row span:first-child{color:var(--muted)}.row strong{font-size:18px}.total{margin-top:6px;padding-top:13px;border-top:1px solid var(--border)}.total strong{font-size:26px}.actions{display:flex;gap:8px;margin-top:12px}.actions>*{flex:1}.links{display:flex;gap:8px;margin-top:12px}.link{text-align:center;text-decoration:none}.notice{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.6}
+</style>
+</head>
+<body><main class="wrap">
+<div class="tools"><button class="theme" id="theme" type="button">🌙 다크모드</button></div><div class="brand">FLiCK CALC</div>
+<h1>종합소득세 계산기</h1><p class="sub">과세표준을 입력하면 기본세율 기준 산출세액을 계산합니다.</p>
+<section class="card"><div class="field"><label for="base">종합소득 과세표준</label><input id="base" type="number" min="0" step="10000" value="30000000" inputmode="decimal"></div>
+<div class="result"><div class="row"><span>과세표준</span><strong id="baseResult">30,000,000원</strong></div><div class="row"><span>적용 세율</span><strong id="rateResult">15%</strong></div><div class="row"><span>누진공제</span><strong id="deductionResult">1,260,000원</strong></div><div class="row total"><span>예상 산출세액</span><strong id="taxResult">3,240,000원</strong></div></div>
+<div class="actions"><button class="btn" id="reset" type="button">초기화</button></div></section>
+<div class="links"><a class="link" href="/calculator-list.html">계산기 목록</a><a class="link" href="/vat.html">부가세 계산기</a></div>
+<p class="notice">※ 국세청 기본세율을 과세표준에 적용한 산출세액 단순 계산입니다. 실제 납부세액은 소득공제·세액공제·감면·가산세·기납부세액 등에 따라 달라집니다.</p>
+</main><script>
+// 저장된 테마를 불러와 라이트/다크 모드를 유지합니다.
+const root=document.documentElement,theme=document.getElementById('theme'),saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
+const base=document.getElementById('base'),baseResult=document.getElementById('baseResult'),rateResult=document.getElementById('rateResult'),deductionResult=document.getElementById('deductionResult'),taxResult=document.getElementById('taxResult'),reset=document.getElementById('reset');
+// 국세청 종합소득세 기본세율(2023~2025년 귀속) 표를 그대로 적용합니다.
+const brackets=[{limit:14000000,rate:0.06,deduction:0},{limit:50000000,rate:0.15,deduction:1260000},{limit:88000000,rate:0.24,deduction:5760000},{limit:150000000,rate:0.35,deduction:15440000},{limit:300000000,rate:0.38,deduction:19940000},{limit:500000000,rate:0.40,deduction:25940000},{limit:1000000000,rate:0.42,deduction:35940000},{limit:Infinity,rate:0.45,deduction:65940000}];
+function won(value){return `${Math.round(value).toLocaleString('ko-KR')}원`}
+function calculate(){const value=Math.max(0,Number(base.value)||0);const bracket=brackets.find(item=>value<=item.limit);const tax=Math.max(0,value*bracket.rate-bracket.deduction);baseResult.textContent=won(value);rateResult.textContent=`${bracket.rate*100}%`;deductionResult.textContent=won(bracket.deduction);taxResult.textContent=won(tax)}
+base.addEventListener('input',calculate);reset.addEventListener('click',()=>{base.value=30000000;calculate()});calculate();
+</script></body></html>
