@@ -1,0 +1,19 @@
+{
+  "brand": "FLiCK Calc",
+  "calculators": [
+    {
+      "id": "salary",
+      "name": "연봉 실수령액 계산기",
+      "path": "/",
+      "category": "직장·급여",
+      "status": "active"
+    },
+    {
+      "id": "retirement",
+      "name": "퇴직금 계산기",
+      "path": "/retirement.html",
+      "category": "직장·급여",
+      "status": "active"
+    }
+  ]
+}
