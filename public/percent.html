@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>퍼센트 계산기 | FLiCK Calc</title>
+  <meta name="description" content="퍼센트, 비율, 증감률, 증가·감소 적용을 간편하게 계산합니다.">
+  <link rel="canonical" href="https://flick-calc.carpick.workers.dev/percent.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="퍼센트 계산기 | FLiCK Calc">
+  <meta property="og:description" content="퍼센트, 비율, 증감률, 증가·감소 적용을 간편하게 계산합니다.">
+  <meta property="og:url" content="https://flick-calc.carpick.workers.dev/percent.html">
+  <style>
+    :root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--primary:#2563eb;--soft:#f8fafc}
+    html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--primary:#4f8cff;--soft:#11141a}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}.theme{border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--text);padding:9px 13px;font-weight:800;cursor:pointer}h1{margin:18px 0 7px;font-size:clamp(30px,8vw,42px)}.sub{margin:0 0 22px;color:var(--muted);font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:12px}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}.tab{border:1px solid var(--border);border-radius:12px;background:var(--soft);color:var(--text);padding:12px 8px;font-weight:800;cursor:pointer}.tab.active{background:var(--primary);border-color:var(--primary);color:#fff}.field{margin-bottom:14px}.field label{display:block;margin-bottom:7px;font-size:13px;font-weight:800}.field input{width:100%;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--soft);color:var(--text);font-size:16px;outline:none}.field input:focus{border-color:var(--primary)}.result{margin-top:18px;padding:17px;border-radius:14px;background:var(--soft);border:1px solid var(--border)}.row{display:flex;justify-content:space-between;gap:16px;padding:7px 0;font-size:14px}.row strong{font-size:16px}.notice{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.65}.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.links a{text-decoration:none;color:var(--primary);font-size:13px;font-weight:800}.hidden{display:none}.empty{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="top"><div class="brand">FLiCK CALC</div><button class="theme" id="theme" type="button">🌙 다크모드</button></div>
+    <h1>퍼센트 계산기</h1>
+    <p class="sub">퍼센트, 비율, 증감률, 증가·감소 후 금액을 빠르게 계산합니다.</p>
+
+    <section class="card">
+      <div class="tabs" role="tablist" aria-label="퍼센트 계산 방식">
+        <button class="tab active" id="partTab" type="button">값의 퍼센트</button>
+        <button class="tab" id="ratioTab" type="button">몇 퍼센트인지</button>
+        <button class="tab" id="changeTab" type="button">증감률</button>
+        <button class="tab" id="applyTab" type="button">증가·감소 적용</button>
+      </div>
+
+      <div id="partMode">
+        <div class="field"><label for="partBase">기준값</label><input id="partBase" type="number" inputmode="decimal" value="100000"></div>
+        <div class="field"><label for="partRate">퍼센트</label><input id="partRate" type="number" inputmode="decimal" value="15"></div>
+      </div>
+
+      <div id="ratioMode" class="hidden">
+        <div class="field"><label for="ratioPart">부분값</label><input id="ratioPart" type="number" inputmode="decimal" value="15000"></div>
+        <div class="field"><label for="ratioTotal">전체값</label><input id="ratioTotal" type="number" inputmode="decimal" value="100000"></div>
+      </div>
+
+      <div id="changeMode" class="hidden">
+        <div class="field"><label for="changeBefore">이전 값</label><input id="changeBefore" type="number" inputmode="decimal" value="100000"></div>
+        <div class="field"><label for="changeAfter">변경 값</label><input id="changeAfter" type="number" inputmode="decimal" value="120000"></div>
+      </div>
+
+      <div id="applyMode" class="hidden">
+        <div class="field"><label for="applyBase">기준값</label><input id="applyBase" type="number" inputmode="decimal" value="100000"></div>
+        <div class="field"><label for="applyRate">퍼센트</label><input id="applyRate" type="number" inputmode="decimal" value="20"></div>
+        <div class="tabs" style="margin-bottom:0"><button class="tab active" id="increase" type="button">증가</button><button class="tab" id="decrease" type="button">감소</button></div>
+      </div>
+
+      <div class="result" aria-live="polite">
+        <div class="row"><span id="resultLabel">계산 결과</span><strong id="result">15,000</strong></div>
+        <div class="row"><span>계산식</span><strong id="formula">100,000 × 15 ÷ 100</strong></div>
+      </div>
+      <p class="notice">입력값은 브라우저에서만 계산됩니다. 증감률은 기준값이 0이면 일반적인 백분율로 계산할 수 없습니다.</p>
+    </section>
+    <div class="links"><a href="/calculator-list.html">← 계산기 목록</a><a href="/vat.html">부가세 계산기</a></div>
+  </main>
+
+  <script>
+    // 저장된 테마를 적용하고, 저장값이 없으면 기기 설정을 따릅니다.
+    const root=document.documentElement,theme=document.getElementById('theme'),saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
+    function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
+
+    // 네 가지 계산 모드를 전환합니다.
+    const modes=['part','ratio','change','apply'];let mode='part',applyDirection='increase';
+    const tabs={part:document.getElementById('partTab'),ratio:document.getElementById('ratioTab'),change:document.getElementById('changeTab'),apply:document.getElementById('applyTab')};
+    const panels={part:document.getElementById('partMode'),ratio:document.getElementById('ratioMode'),change:document.getElementById('changeMode'),apply:document.getElementById('applyMode')};
+    function setMode(next){mode=next;modes.forEach(k=>{tabs[k].classList.toggle('active',k===mode);panels[k].classList.toggle('hidden',k!==mode)});calculate()}
+    modes.forEach(k=>tabs[k].addEventListener('click',()=>setMode(k)));
+    document.getElementById('increase').addEventListener('click',()=>{applyDirection='increase';document.getElementById('increase').classList.add('active');document.getElementById('decrease').classList.remove('active');calculate()});
+    document.getElementById('decrease').addEventListener('click',()=>{applyDirection='decrease';document.getElementById('decrease').classList.add('active');document.getElementById('increase').classList.remove('active');calculate()});
+
+    const $=id=>document.getElementById(id),num=id=>Number($(id).value)||0;
+    const fmt=n=>Number.isFinite(n)?n.toLocaleString('ko-KR',{maximumFractionDigits:6}):'계산 불가';
+    function calculate(){
+      let result,formula,label='계산 결과';
+      if(mode==='part'){
+        const base=num('partBase'),rate=num('partRate');result=base*rate/100;formula=`${fmt(base)} × ${fmt(rate)} ÷ 100`;
+      }else if(mode==='ratio'){
+        const part=num('ratioPart'),total=num('ratioTotal');
+        if(total===0){result=NaN;formula='전체값이 0이면 계산할 수 없습니다.'}else{result=part/total*100;formula=`${fmt(part)} ÷ ${fmt(total)} × 100`;}label='비율';
+      }else if(mode==='change'){
+        const before=num('changeBefore'),after=num('changeAfter');
+        if(before===0){result=NaN;formula='이전 값이 0이면 일반적인 증감률을 계산할 수 없습니다.'}else{result=(after-before)/before*100;formula=`(${fmt(after)} - ${fmt(before)}) ÷ ${fmt(before)} × 100`;}label='증감률';
+      }else{
+        const base=num('applyBase'),rate=num('applyRate'),factor=applyDirection==='increase'?1+rate/100:1-rate/100;result=base*factor;formula=`${fmt(base)} × (1 ${applyDirection==='increase'?'+':'-'} ${fmt(rate)} ÷ 100)`;label=applyDirection==='increase'?'증가 후 금액':'감소 후 금액';
+      }
+      $('resultLabel').textContent=label;$('result').textContent=fmt(result)+(mode==='ratio'||mode==='change'?'%':'');$('formula').textContent=formula;
+    }
+    document.querySelectorAll('input').forEach(input=>input.addEventListener('input',calculate));calculate();
+  </script>
+</body>
+</html>
