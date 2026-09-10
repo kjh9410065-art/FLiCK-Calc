@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://flick-calc.carpick.workers.dev/</loc><lastmod>2026-09-10</lastmod></url>
-  <url><loc>https://flick-calc.carpick.workers.dev/calculator-list.html</loc><lastmod>2026-09-10</lastmod></url>
+  <url><loc>https://flick-calc.carpick.workers.dev/</loc><lastmod>2026-09-11</lastmod></url>
+  <url><loc>https://flick-calc.carpick.workers.dev/calculator-list.html</loc><lastmod>2026-09-11</lastmod></url>
   <url><loc>https://flick-calc.carpick.workers.dev/salary.html</loc><lastmod>2026-09-10</lastmod></url>
   <url><loc>https://flick-calc.carpick.workers.dev/retirement.html</loc><lastmod>2026-09-10</lastmod></url>
   <url><loc>https://flick-calc.carpick.workers.dev/annual-leave.html</loc><lastmod>2026-09-10</lastmod></url>
@@ -22,4 +22,5 @@
   <url><loc>https://flick-calc.carpick.workers.dev/age.html</loc><lastmod>2026-09-10</lastmod></url>
   <url><loc>https://flick-calc.carpick.workers.dev/time-duration.html</loc><lastmod>2026-09-10</lastmod></url>
   <url><loc>https://flick-calc.carpick.workers.dev/date-add.html</loc><lastmod>2026-09-10</lastmod></url>
+  <url><loc>https://flick-calc.carpick.workers.dev/weekday.html</loc><lastmod>2026-09-11</lastmod></url>
 </urlset>
