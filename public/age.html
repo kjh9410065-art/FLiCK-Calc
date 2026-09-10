@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>나이 계산기 | FLiCK Calc</title>
+<meta name="description" content="생년월일을 입력하면 만 나이와 다음 생일까지 남은 날짜를 계산합니다.">
+<link rel="canonical" href="https://flick-calc.carpick.workers.dev/age.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="나이 계산기 | FLiCK Calc">
+<meta property="og:description" content="생년월일을 입력하면 만 나이와 다음 생일까지 남은 날짜를 계산합니다.">
+<meta property="og:url" content="https://flick-calc.carpick.workers.dev/age.html">
+<style>
+:root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#d9dee8;--primary:#2563eb}
+html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#353b47;--primary:#4f8cff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.tools{display:flex;justify-content:flex-end}.theme,.btn,.link{border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);padding:11px 14px;font-weight:800;cursor:pointer}.brand{margin-top:22px;font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}h1{margin:10px 0 7px;font-size:clamp(30px,8vw,42px)}.sub{margin:0 0 22px;color:var(--muted);font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px}.field label{display:block;margin-bottom:7px;font-size:13px;font-weight:900}.field input{width:100%;padding:14px;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font-size:16px}.result{margin-top:16px;display:grid;gap:10px}.item{padding:16px;border-radius:14px;background:var(--bg);border:1px solid var(--border)}.label{font-size:12px;color:var(--muted);font-weight:800}.big{margin-top:4px;font-size:28px;font-weight:900}.detail{margin-top:4px;color:var(--muted);font-size:13px}.actions{display:flex;margin-top:12px}.actions>*{flex:1}.links{display:flex;gap:8px;margin-top:12px}.link{text-align:center;text-decoration:none}.notice{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.6}
+</style>
+</head>
+<body>
+<main class="wrap">
+<div class="tools"><button class="theme" id="theme" type="button">🌙 다크모드</button></div>
+<div class="brand">FLiCK CALC</div>
+<h1>나이 계산기</h1>
+<p class="sub">생년월일을 입력하면 오늘 기준 만 나이를 계산하세요.</p>
+<section class="card">
+<div class="field"><label for="birth">생년월일</label><input id="birth" type="date"></div>
+<div class="result">
+<div class="item"><div class="label">만 나이</div><div class="big" id="age">생년월일을 선택하세요</div><div class="detail" id="ageDetail">오늘 기준 만 나이를 계산합니다.</div></div>
+<div class="item"><div class="label">다음 생일</div><div class="big" id="birthday">-</div><div class="detail" id="birthdayDetail">생년월일을 입력하면 계산합니다.</div></div>
+</div>
+<div class="actions"><button class="btn" id="reset" type="button">초기화</button></div>
+</section>
+<div class="links"><a class="link" href="/calculator-list.html">계산기 목록</a><a class="link" href="/dday.html">D-day 계산기</a></div>
+<p class="notice">※ 만 나이는 생일이 지났는지를 반영해 계산합니다. 미래의 생년월일은 계산하지 않습니다.</p>
+</main>
+<script>
+// 저장된 테마를 불러와 라이트/다크 모드를 유지합니다.
+const root=document.documentElement,theme=document.getElementById('theme'),saved=localStorage.getItem('flick-theme');
+if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
+function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}
+theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
+const birth=document.getElementById('birth'),age=document.getElementById('age'),ageDetail=document.getElementById('ageDetail'),birthday=document.getElementById('birthday'),birthdayDetail=document.getElementById('birthdayDetail'),reset=document.getElementById('reset');
+function todayParts(){
+  // 사용자의 기기 기준 오늘 날짜를 연·월·일로 가져옵니다.
+  const now=new Date();return {year:now.getFullYear(),month:now.getMonth()+1,day:now.getDate()};
+}
+function utcDate(y,m,d){
+  // 날짜만 비교해 시간대 때문에 나이가 하루씩 달라지는 문제를 막습니다.
+  return Date.UTC(y,m-1,d);
+}
+function formatDate(y,m,d){return `${y}년 ${m}월 ${d}일`}
+function calculate(){
+  // 생년월일이 없으면 결과 영역을 기본 상태로 돌립니다.
+  if(!birth.value){age.textContent='생년월일을 선택하세요';ageDetail.textContent='오늘 기준 만 나이를 계산합니다.';birthday.textContent='-';birthdayDetail.textContent='생년월일을 입력하면 계산합니다.';return}
+  const [by,bm,bd]=birth.value.split('-').map(Number),today=todayParts();
+  const birthTime=utcDate(by,bm,bd),todayTime=utcDate(today.year,today.month,today.day);
+  if(birthTime>todayTime){age.textContent='계산할 수 없습니다';ageDetail.textContent='미래 날짜는 생년월일로 입력할 수 없습니다.';birthday.textContent='-';birthdayDetail.textContent='';return}
+  // 올해 생일이 지났는지를 확인해 만 나이를 계산합니다.
+  let years=today.year-by;if(today.month<bm||(today.month===bm&&today.day<bd))years--;
+  age.textContent=`만 ${years}세`;ageDetail.textContent=`출생일: ${formatDate(by,bm,bd)}`;
+  // 다음 생일의 연도를 결정하고 다음 생일까지 남은 일수를 계산합니다.
+  let nextYear=today.year;if(utcDate(nextYear,bm,bd)<todayTime)nextYear++;
+  const nextTime=utcDate(nextYear,bm,bd),days=Math.round((nextTime-todayTime)/86400000);
+  birthday.textContent=formatDate(nextYear,bm,bd);
+  birthdayDetail.textContent=days===0?'오늘이 생일입니다.':`다음 생일까지 ${days.toLocaleString('ko-KR')}일 남았습니다.`;
+}
+birth.addEventListener('input',calculate);
+reset.addEventListener('click',()=>{birth.value='';calculate()});
+</script>
+</body>
+</html>
