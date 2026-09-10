@@ -2,7 +2,13 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f7fb">
-<title>FLiCK Calc - 연봉 실수령액 계산기</title><meta name="description" content="연봉을 입력하면 월 예상 실수령액을 계산합니다.">
+<title>FLiCK Calc - 연봉 실수령액 계산기</title>
+<meta name="description" content="연봉과 부양가족 정보를 입력해 월 예상 실수령액과 공제액을 계산합니다.">
+<link rel="canonical" href="https://flick-calc.carpick.workers.dev/salary.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="FLiCK Calc - 연봉 실수령액 계산기">
+<meta property="og:description" content="연봉과 부양가족 정보를 입력해 월 예상 실수령액과 공제액을 계산합니다.">
+<meta property="og:url" content="https://flick-calc.carpick.workers.dev/salary.html">
 <style>
 :root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--input:#fff;--primary:#2563eb;--result:#eef4ff;--soft:#f8fafc}html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--input:#11141a;--primary:#4f8cff;--result:#182846;--soft:#11141a}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:24px 0 48px}header{padding:8px 4px 20px;position:relative}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}h1{margin:8px 0 6px;font-size:clamp(27px,7vw,40px)}.sub{margin:0;color:var(--muted);font-size:14px}.theme{position:absolute;right:0;top:0;min-height:42px;padding:0 13px;border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--text);font-weight:800}.card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:20px;box-shadow:0 10px 30px rgba(16,24,40,.06)}.field{margin-bottom:15px}label{display:block;margin-bottom:7px;font-size:14px;font-weight:800}.input-row{display:flex;align-items:center;gap:8px}input{width:100%;min-height:50px;border:1px solid var(--border);border-radius:12px;padding:0 14px;font-size:16px;background:var(--input);color:var(--text)}.unit{white-space:nowrap;color:var(--muted)}.quick{display:flex;gap:8px;overflow:auto;margin:-3px 0 15px;padding:2px 1px 5px}.quick button{flex:0 0 auto;min-height:38px;padding:0 12px;border:1px solid var(--border);border-radius:10px;background:var(--soft);color:var(--text);font-weight:800}.calc{width:100%;min-height:54px;border:0;border-radius:13px;background:var(--primary);color:#fff;font-size:16px;font-weight:900}.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.tool{min-height:44px;border:1px solid var(--border);border-radius:11px;background:var(--soft);color:var(--text);font-weight:800}.result{margin-top:18px;padding:22px;border-radius:18px;background:var(--result);text-align:center}.result-label{font-size:14px;color:var(--muted)}.take{margin-top:5px;font-size:clamp(31px,9vw,48px);font-weight:950;color:var(--primary)}.annual{margin-top:5px;color:var(--muted);font-size:14px}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.summary-card{padding:12px 8px;border:1px solid var(--border);border-radius:13px;background:var(--soft)}.summary-label{font-size:11px;color:var(--muted)}.summary-value{margin-top:4px;font-size:14px;font-weight:900}.details{margin-top:18px;border-top:1px solid var(--border)}.row{display:flex;justify-content:space-between;padding:13px 2px;border-bottom:1px solid var(--border);font-size:14px}.row span{color:var(--muted)}.notice{margin:16px 2px 0;color:var(--muted);font-size:12px;line-height:1.65}.status{min-height:18px;margin:8px 2px;text-align:center;color:var(--muted);font-size:12px}@media(max-width:420px){.wrap{width:calc(100% - 18px);padding-top:16px}.card{padding:16px}.theme{position:relative;right:auto;top:auto;margin-top:14px}.summary{gap:6px}.summary-card{padding:11px 5px}.summary-value{font-size:13px}}
 </style></head>
@@ -19,38 +25,15 @@
 <div class="summary"><div class="summary-card"><div class="summary-label">월 급여</div><div class="summary-value" id="gross">-</div></div><div class="summary-card"><div class="summary-label">월 공제액</div><div class="summary-value" id="deduction">-</div></div><div class="summary-card"><div class="summary-label">실수령 비율</div><div class="summary-value" id="ratio">-</div></div></div><div class="details" id="details"></div>
 <p class="notice">※ 예상 계산입니다. 국세청은 월급여와 공제대상 가족 수에 따른 근로소득 간이세액표를 사용하도록 안내합니다. 현재 계산기의 전체 소득세 구간은 간편 추정이며, 8~20세 자녀 공제액은 국세청 안내 기준을 반영했습니다. 실제 급여는 비과세 항목·원천징수 방식·연말정산 등에 따라 달라질 수 있습니다.</p></section></main>
 <script>
-// 원화 표시 함수입니다.
 const won=v=>Math.round(v).toLocaleString('ko-KR')+'원';const root=document.documentElement,theme=document.getElementById('theme'),status=document.getElementById('status');
-// 다크모드 설정을 저장하고 복원합니다.
 const saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}theme.onclick=()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()};updateTheme();
-// 입력값을 안전한 범위로 제한합니다.
 function num(id,min,max){const v=Number(document.getElementById(id).value);return Number.isFinite(v)?Math.max(min,Math.min(max,v)):min}
-// 국세청 현재 안내에 표시된 8~20세 자녀 공제액을 적용합니다.
 function childAdjustment(n){if(n<=0)return 0;if(n===1)return 12500;if(n===2)return 29160;return 29160+(n-2)*25000}
-// 연봉과 공제 정보를 계산합니다.
-function calculate(){const annual=Math.round(num('salary',0,1000000000)),gross=annual/12,nontax=Math.min(num('nontax',0,100000000),gross),taxable=Math.max(0,gross-nontax),dependents=Math.round(num('dependents',1,20)),children=Math.round(num('children',0,20));
-// 국민연금 근로자 부담 4.75%, 2026년 7월 적용 상·하한을 반영합니다.
-const pensionBase=taxable>0?Math.max(410000,Math.min(taxable,6590000)):0,pension=pensionBase*0.0475;
-// 건강보험과 장기요양보험료를 계산합니다.
-const health=taxable*0.03595,care=health*0.1314;
-// 고용보험 근로자 부담 0.9%를 계산합니다.
-const employment=taxable*0.009;
-// 공식 간이세액표 전체 원자료를 확보하기 전까지 기존 간편 추정식을 유지합니다.
-const familyFactor=Math.min(0.45,Math.max(0,(dependents-1)*0.035));let incomeTax=Math.max(0,(taxable*0.045-50000)*(1-familyFactor));incomeTax=Math.min(incomeTax,taxable*0.18);
-// 자녀 공제액은 국세청 안내값을 별도로 반영합니다.
-incomeTax=Math.max(0,incomeTax-childAdjustment(children));const localTax=incomeTax*0.1,total=pension+health+care+employment+incomeTax+localTax,takeHome=Math.max(0,gross-total),ratio=gross>0?takeHome/gross*100:0;
-document.getElementById('take').textContent=won(takeHome);document.getElementById('annual').textContent='연간 예상 실수령액 '+won(takeHome*12);document.getElementById('gross').textContent=won(gross);document.getElementById('deduction').textContent=won(total);document.getElementById('ratio').textContent=ratio.toFixed(1)+'%';
-const rows=[['월 급여',won(gross)],['국민연금','-'+won(pension)],['건강보험','-'+won(health)],['장기요양보험','-'+won(care)],['고용보험','-'+won(employment)],['소득세(간편 예상)','-'+won(incomeTax)],['지방소득세','-'+won(localTax)]];document.getElementById('details').innerHTML=rows.map(([a,b])=>`<div class="row"><span>${a}</span><strong>${b}</strong></div>`).join('');syncUrl();status.textContent='입력값을 기준으로 자동 계산됨'}
-// 현재 조건을 공유 URL에 저장합니다.
+function calculate(){const annual=Math.round(num('salary',0,1000000000)),gross=annual/12,nontax=Math.min(num('nontax',0,100000000),gross),taxable=Math.max(0,gross-nontax),dependents=Math.round(num('dependents',1,20)),children=Math.round(num('children',0,20));const pensionBase=taxable>0?Math.max(410000,Math.min(taxable,6590000)):0,pension=pensionBase*0.0475;const health=taxable*0.03595,care=health*0.1314;const employment=taxable*0.009;const familyFactor=Math.min(0.45,Math.max(0,(dependents-1)*0.035));let incomeTax=Math.max(0,(taxable*0.045-50000)*(1-familyFactor));incomeTax=Math.min(incomeTax,taxable*0.18);incomeTax=Math.max(0,incomeTax-childAdjustment(children));const localTax=incomeTax*0.1,total=pension+health+care+employment+incomeTax+localTax,takeHome=Math.max(0,gross-total),ratio=gross>0?takeHome/gross*100:0;document.getElementById('take').textContent=won(takeHome);document.getElementById('annual').textContent='연간 예상 실수령액 '+won(takeHome*12);document.getElementById('gross').textContent=won(gross);document.getElementById('deduction').textContent=won(total);document.getElementById('ratio').textContent=ratio.toFixed(1)+'%';const rows=[['월 급여',won(gross)],['국민연금','-'+won(pension)],['건강보험','-'+won(health)],['장기요양보험','-'+won(care)],['고용보험','-'+won(employment)],['소득세(간편 예상)','-'+won(incomeTax)],['지방소득세','-'+won(localTax)]];document.getElementById('details').innerHTML=rows.map(([a,b])=>`<div class="row"><span>${a}</span><strong>${b}</strong></div>`).join('');syncUrl();status.textContent='입력값을 기준으로 자동 계산됨'}
 function syncUrl(){const p=new URLSearchParams({salary:salary.value,nontax:nontax.value,dependents:dependents.value,children:children.value});history.replaceState(null,'','?'+p)}
-// 공유 URL의 값을 복원합니다.
 const params=new URLSearchParams(location.search);['salary','nontax','dependents','children'].forEach(id=>{if(params.has(id))document.getElementById(id).value=params.get(id)});
-// 빠른 연봉 버튼입니다.
 document.querySelectorAll('[data-salary]').forEach(btn=>btn.onclick=()=>{salary.value=btn.dataset.salary;calculate()});
-// 입력값이 바뀌면 자동 계산합니다.
 ['salary','nontax','dependents','children'].forEach(id=>document.getElementById(id).addEventListener('input',calculate));form.onsubmit=e=>{e.preventDefault();calculate()};
-// 계산 조건을 공유하거나 링크를 복사합니다.
 share.onclick=async()=>{syncUrl();try{if(navigator.share)await navigator.share({title:'FLiCK Calc - 연봉 실수령액 계산기',text:'연봉 실수령액 계산 결과',url:location.href});else{await navigator.clipboard.writeText(location.href);status.textContent='계산 결과 링크를 복사했습니다.'}}catch(e){}};
-// 기본값으로 초기화합니다.
-reset.onclick=()=>{salary.value=40000000;nontax.value=200000;dependents.value=1;children.value=0;calculate();status.textContent='기본값으로 초기화했습니다.'};calculate();
+reset.onclick=()=>{salary.value=40000000;nontax.value=200000;dependents.value=1;children.value=0;history.replaceState(null,'',location.pathname);calculate();status.textContent='기본값으로 초기화했습니다.'};calculate();
 </script></body></html>
