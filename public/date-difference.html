@@ -30,7 +30,7 @@ html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#
 <div class="result"><div class="big" id="result">0일</div><div class="detail" id="detail">날짜를 입력하면 차이를 계산합니다.</div></div>
 <div class="actions"><button class="btn" id="reset" type="button">초기화</button></div>
 </section>
-<div class="links"><a class="link" href="/calculator-list.html">계산기 목록</a><a class="link" href="/percent.html">퍼센트 계산기</a></div>
+<div class="links"><a class="link" href="/calculator-list.html">계산기 목록</a><a class="link" href="/dday.html">D-day 계산기</a></div>
 <p class="notice">※ 두 날짜의 달력상 차이를 기준으로 계산합니다. 시작일과 종료일을 모두 포함하는 일수와는 결과가 다를 수 있습니다.</p>
 </main>
 <script>
@@ -39,7 +39,7 @@ const root=document.documentElement,theme=document.getElementById('theme'),saved
 if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
 function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}
 theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
-const start=document.getElementById('start'),end=document.getElementById('end'),result=document.getElementById('result'),detail=document.getElementById('detail');
+const start=document.getElementById('start'),end=document.getElementById('end'),result=document.getElementById('result'),detail=document.getElementById('detail'),reset=document.getElementById('reset');
 function calculate(){
   // 날짜 입력값을 UTC 기준으로 바꿔 서머타임 등 시간대 영향을 피합니다.
   if(!start.value||!end.value){result.textContent='0일';detail.textContent='날짜를 입력하면 차이를 계산합니다.';return}
