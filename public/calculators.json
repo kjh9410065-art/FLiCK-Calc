@@ -13,6 +13,7 @@
     {"id":"vat","name":"부가세 계산기","url":"/vat.html","category":"세금·사업","description":"공급가액 또는 부가세 포함 금액을 기준으로 부가세를 계산합니다.","status":"active"},
     {"id":"income-tax","name":"종합소득세 계산기","url":"/income-tax.html","category":"세금·사업","description":"종합소득 과세표준을 기준으로 기본세율 산출세액을 계산합니다.","status":"active"},
     {"id":"percent","name":"퍼센트 계산기","url":"/percent.html","category":"수학","description":"퍼센트, 비율, 증감률, 증가·감소 후 금액을 계산합니다.","status":"active"},
+    {"id":"ratio","name":"비율 계산기","url":"/ratio.html","category":"수학","description":"두 값의 비율과 간단한 정수비를 계산합니다.","status":"active"},
     {"id":"discount","name":"할인율 계산기","url":"/discount.html","category":"생활","description":"상품 가격과 할인율을 기준으로 할인 금액과 최종 가격을 계산합니다.","status":"active"},
     {"id":"date-difference","name":"날짜 차이 계산기","url":"/date-difference.html","category":"날짜·시간","description":"두 날짜 사이의 기간과 일수를 계산합니다.","status":"active"},
     {"id":"dday","name":"D-day 계산기","url":"/dday.html","category":"날짜·시간","description":"목표 날짜를 입력하면 오늘을 기준으로 D-day를 계산합니다.","status":"active"},
