@@ -4,15 +4,17 @@
     {
       "id": "salary",
       "name": "연봉 실수령액 계산기",
-      "path": "/",
+      "url": "/salary.html",
       "category": "직장·급여",
+      "description": "연봉을 입력하면 월 예상 실수령액을 확인할 수 있습니다.",
       "status": "active"
     },
     {
       "id": "retirement",
       "name": "퇴직금 계산기",
-      "path": "/retirement.html",
+      "url": "/retirement.html",
       "category": "직장·급여",
+      "description": "평균임금과 근속기간을 기준으로 예상 퇴직금을 계산합니다.",
       "status": "active"
     }
   ]
