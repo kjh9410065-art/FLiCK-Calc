@@ -5,43 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f5f7fb">
   <title>FLiCK Calc - 계산기 모음</title>
-  <meta name="description" content="FLiCK Calc에서 연봉, 퇴직금 등 생활에 필요한 계산기를 간편하게 이용하세요.">
+  <meta name="description" content="FLiCK Calc에서 생활에 필요한 계산기를 간편하게 이용하세요.">
   <style>
     :root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--primary:#2563eb;--soft:#f8fafc}
     html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--primary:#4f8cff;--soft:#11141a}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}
-    .wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}
-    h1{margin:10px 0 7px;font-size:clamp(30px,8vw,42px)}.sub{margin:0 0 22px;color:var(--muted);font-size:14px}.tools{display:flex;justify-content:flex-end;margin-bottom:10px}.theme{border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--text);padding:9px 13px;font-weight:800}
-    .grid{display:grid;gap:12px}.card{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:19px;transition:transform .15s,border-color .15s}.card:hover{transform:translateY(-2px);border-color:var(--primary)}
-    .category{font-size:11px;font-weight:900;color:var(--primary);letter-spacing:.05em}.title{margin-top:6px;font-size:19px;font-weight:900}.desc{margin-top:5px;color:var(--muted);font-size:13px;line-height:1.5}.arrow{margin-top:13px;font-size:13px;font-weight:800;color:var(--primary)}
-    .empty{padding:20px;border:1px dashed var(--border);border-radius:16px;color:var(--muted);text-align:center}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}h1{margin:10px 0 7px;font-size:clamp(30px,8vw,42px)}.sub{margin:0 0 22px;color:var(--muted);font-size:14px}.tools{display:flex;justify-content:flex-end;margin-bottom:10px}.theme{border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--text);padding:9px 13px;font-weight:800;cursor:pointer}.grid{display:grid;gap:12px}.card{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:19px;transition:transform .15s,border-color .15s}.card:hover{transform:translateY(-2px);border-color:var(--primary)}.category{font-size:11px;font-weight:900;color:var(--primary);letter-spacing:.05em}.title{margin-top:6px;font-size:19px;font-weight:900}.desc{margin-top:5px;color:var(--muted);font-size:13px;line-height:1.5}.arrow{margin-top:13px;font-size:13px;font-weight:800;color:var(--primary)}.empty{padding:20px;border:1px dashed var(--border);border-radius:16px;color:var(--muted);text-align:center}
   </style>
 </head>
 <body>
   <main class="wrap">
     <div class="tools"><button class="theme" id="theme" type="button">🌙 다크모드</button></div>
-    <div class="brand">FLiCK CALC</div>
-    <h1>계산기 모음</h1>
-    <p class="sub">생활에 필요한 계산기를 한곳에서 간편하게 이용하세요.</p>
+    <div class="brand">FLiCK CALC</div><h1>계산기 모음</h1><p class="sub">생활에 필요한 계산기를 한곳에서 간편하게 이용하세요.</p>
     <section class="grid" id="list" aria-live="polite"></section>
   </main>
   <script>
-    // 저장된 테마를 불러와 사용자가 원하는 화면 모드를 유지합니다.
-    const root=document.documentElement,theme=document.getElementById('theme'),saved=localStorage.getItem('flick-theme');
-    if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
-    function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}
-    theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
-
-    // calculators.json을 읽어 등록된 계산기 카드를 자동으로 만듭니다.
-    async function loadCalculators(){
-      const list=document.getElementById('list');
-      try{
-        const response=await fetch('/calculators.json',{cache:'no-store'});
-        if(!response.ok)throw new Error('목록을 불러오지 못했습니다.');
-        const calculators=await response.json();
-        list.innerHTML=calculators.map(item=>`<a class="card" href="${item.url}"><div class="category">${item.category||'계산기'}</div><div class="title">${item.name}</div><div class="desc">${item.description||''}</div><div class="arrow">계산하기 →</div></a>`).join('');
-      }catch(error){list.innerHTML='<div class="empty">계산기 목록을 불러오지 못했습니다.</div>';}
-    }
+    // 저장된 테마를 불러와 화면 모드를 유지합니다.
+    const root=document.documentElement,theme=document.getElementById('theme'),saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
+    function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
+    // JSON의 calculators 배열을 읽어 계산기 카드를 자동 생성합니다.
+    async function loadCalculators(){const list=document.getElementById('list');try{const response=await fetch('/calculators.json',{cache:'no-store'});if(!response.ok)throw new Error();const data=await response.json();const calculators=Array.isArray(data)?data:data.calculators;if(!Array.isArray(calculators))throw new Error();list.innerHTML=calculators.filter(item=>item.status!=='inactive').map(item=>`<a class="card" href="${item.url||item.path}"><div class="category">${item.category||'계산기'}</div><div class="title">${item.name}</div><div class="desc">${item.description||''}</div><div class="arrow">계산하기 →</div></a>`).join('')}catch(error){list.innerHTML='<div class="empty">계산기 목록을 불러오지 못했습니다.</div>'}}
     loadCalculators();
   </script>
 </body>
