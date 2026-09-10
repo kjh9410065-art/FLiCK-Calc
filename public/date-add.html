@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>날짜 더하기·빼기 계산기 | FLiCK Calc</title>
+<meta name="description" content="기준 날짜에 원하는 일수를 더하거나 빼서 날짜를 계산합니다.">
+<link rel="canonical" href="https://flick-calc.carpick.workers.dev/date-add.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="날짜 더하기·빼기 계산기 | FLiCK Calc">
+<meta property="og:description" content="기준 날짜에 원하는 일수를 더하거나 빼서 날짜를 계산합니다.">
+<meta property="og:url" content="https://flick-calc.carpick.workers.dev/date-add.html">
+<style>
+:root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#d9dee8;--primary:#2563eb}
+html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#353b47;--primary:#4f8cff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.tools{display:flex;justify-content:flex-end}.theme,.btn,.link{border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);padding:11px 14px;font-weight:800;cursor:pointer}.brand{margin-top:22px;font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}h1{margin:10px 0 7px;font-size:clamp(30px,8vw,42px)}.sub{margin:0 0 22px;color:var(--muted);font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px}.fields{display:grid;gap:14px}.field label{display:block;margin-bottom:7px;font-size:13px;font-weight:900}.field input,.field select{width:100%;padding:14px;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font-size:16px}.result{margin-top:16px;padding:18px;border-radius:14px;background:var(--bg);border:1px solid var(--border)}.big{font-size:26px;font-weight:900}.detail{margin-top:7px;color:var(--muted);font-size:13px;line-height:1.5}.actions{display:flex;gap:8px;margin-top:12px}.actions>*{flex:1}.links{display:flex;gap:8px;margin-top:12px}.link{text-align:center;text-decoration:none}.notice{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.6}
+</style>
+</head>
+<body>
+<main class="wrap">
+<div class="tools"><button class="theme" id="theme" type="button">🌙 다크모드</button></div>
+<div class="brand">FLiCK CALC</div>
+<h1>날짜 더하기·빼기 계산기</h1>
+<p class="sub">기준 날짜에 일수를 더하거나 빼서 결과 날짜를 계산하세요.</p>
+<section class="card">
+<div class="fields">
+<div class="field"><label for="base">기준 날짜</label><input id="base" type="date"></div>
+<div class="field"><label for="days">일수</label><input id="days" type="number" min="0" step="1" value="30"></div>
+<div class="field"><label for="operation">계산</label><select id="operation"><option value="add">일수 더하기</option><option value="subtract">일수 빼기</option></select></div>
+</div>
+<div class="result"><div class="big" id="result">결과 날짜</div><div class="detail" id="detail">기준 날짜와 일수를 입력하면 계산합니다.</div></div>
+<div class="actions"><button class="btn" id="reset" type="button">초기화</button></div>
+</section>
+<div class="links"><a class="link" href="/calculator-list.html">계산기 목록</a><a class="link" href="/date-difference.html">날짜 차이 계산기</a></div>
+<p class="notice">※ 달력 날짜 기준으로 계산합니다. 일수에는 기준 날짜를 포함하지 않고 다음 날짜부터 1일로 계산합니다.</p>
+</main>
+<script>
+// 저장된 테마를 불러와 라이트/다크 모드를 유지합니다.
+const root=document.documentElement,theme=document.getElementById('theme'),saved=localStorage.getItem('flick-theme');
+if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
+function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}
+theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
+const base=document.getElementById('base'),days=document.getElementById('days'),operation=document.getElementById('operation'),result=document.getElementById('result'),detail=document.getElementById('detail'),reset=document.getElementById('reset');
+// 날짜 문자열을 UTC 자정의 숫자로 변환해 시간대/DST 영향을 피합니다.
+function parseDate(value){if(!value)return null;const [y,m,d]=value.split('-').map(Number);return new Date(Date.UTC(y,m-1,d))}
+function formatDate(date){const y=date.getUTCFullYear(),m=String(date.getUTCMonth()+1).padStart(2,'0'),d=String(date.getUTCDate()).padStart(2,'0');return `${y}년 ${m}월 ${d}일`}
+function calculate(){
+  const date=parseDate(base.value),count=Math.max(0,Math.floor(Number(days.value)||0));
+  if(!date){result.textContent='결과 날짜';detail.textContent='기준 날짜와 일수를 입력하면 계산합니다.';return}
+  // 더하기는 양수 방향, 빼기는 음수 방향으로 날짜를 이동합니다.
+  const offset=(operation.value==='add'?1:-1)*count;
+  date.setUTCDate(date.getUTCDate()+offset);
+  result.textContent=formatDate(date);
+  detail.textContent=`기준 날짜에서 ${count.toLocaleString('ko-KR')}일 ${operation.value==='add'?'후':'전'}입니다.`;
+}
+[base,days,operation].forEach(input=>input.addEventListener('input',calculate));
+operation.addEventListener('change',calculate);
+reset.addEventListener('click',()=>{base.value='';days.value='30';operation.value='add';calculate()});
+</script>
+</body>
+</html>
