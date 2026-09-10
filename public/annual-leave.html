@@ -10,23 +10,24 @@
 <section class="card"><form id="form" autocomplete="off">
 <div class="field"><label for="wage">월 통상임금</label><div class="input-row"><input id="wage" type="number" inputmode="numeric" min="0" step="10000" value="3000000" required><span class="unit">원</span></div></div>
 <div class="field"><label for="hours">월 통상임금 산정 기준시간</label><div class="input-row"><input id="hours" type="number" inputmode="decimal" min="1" step="1" value="209" required><span class="unit">시간</span></div></div>
+<div class="field"><label for="dailyHours">1일 소정근로시간</label><div class="input-row"><input id="dailyHours" type="number" inputmode="decimal" min="0.1" max="24" step="0.5" value="8" required><span class="unit">시간</span></div></div>
 <div class="field"><label for="days">미사용 연차</label><div class="input-row"><input id="days" type="number" inputmode="decimal" min="0" step="0.5" value="10" required><span class="unit">일</span></div></div>
 <button class="calc" type="submit">연차수당 계산하기</button></form>
 <div class="tools"><button class="tool" id="share" type="button">🔗 결과 공유</button><button class="tool" id="reset" type="button">↺ 초기화</button></div>
 <section class="result"><div class="label">예상 연차수당</div><div class="amount" id="result">-</div></section><div class="details" id="details"></div>
-<p class="notice">※ 간편 예상 계산입니다. 고용노동부 안내에 따라 별도 규정이 없으면 연차수당은 통상임금을 기준으로 계산하며, 실제 금액은 근로시간·취업규칙·통상임금 해당 항목 등에 따라 달라질 수 있습니다.</p></section></main>
+<p class="notice">※ 간편 예상 계산입니다. 고용노동부 안내에 따라 1일 연차수당은 1일 소정근로시간 × 통상시급을 기준으로 계산합니다. 실제 금액은 근로시간·취업규칙·통상임금 해당 항목 등에 따라 달라질 수 있습니다.</p></section></main>
 <script>
 // 금액을 원화 형식으로 표시합니다.
 const won=v=>Math.round(v).toLocaleString('ko-KR')+'원';const root=document.documentElement,theme=document.getElementById('theme');
 // 사용자의 다크모드 설정을 저장하고 복원합니다.
 const saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}theme.onclick=()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()};updateTheme();
-// 입력값을 이용해 통상시급과 1일 연차수당을 계산합니다.
-function calculate(){const wage=Math.max(0,Number(document.getElementById('wage').value)||0),hours=Math.max(1,Number(document.getElementById('hours').value)||209),days=Math.max(0,Number(document.getElementById('days').value)||0);const hourly=wage/hours,daily=hourly*8,total=daily*days;document.getElementById('result').textContent=won(total);document.getElementById('details').innerHTML=`<div class="row"><span>통상시급</span><strong>${won(hourly)}</strong></div><div class="row"><span>1일 연차수당(8시간 기준)</span><strong>${won(daily)}</strong></div><div class="row"><span>미사용 연차</span><strong>${days}일</strong></div>`}
-document.getElementById('form').onsubmit=e=>{e.preventDefault();calculate()};['wage','hours','days'].forEach(id=>document.getElementById(id).addEventListener('input',calculate));
+// 월 통상임금을 기준시간으로 나눠 통상시급을 구하고, 1일 소정근로시간을 곱해 연차수당을 계산합니다.
+function calculate(){const wage=Math.max(0,Number(document.getElementById('wage').value)||0),hours=Math.max(1,Number(document.getElementById('hours').value)||209),dailyHours=Math.max(0.1,Math.min(24,Number(document.getElementById('dailyHours').value)||8)),days=Math.max(0,Number(document.getElementById('days').value)||0);const hourly=wage/hours,daily=hourly*dailyHours,total=daily*days;document.getElementById('result').textContent=won(total);document.getElementById('details').innerHTML=`<div class="row"><span>통상시급</span><strong>${won(hourly)}</strong></div><div class="row"><span>1일 연차수당</span><strong>${won(daily)}</strong></div><div class="row"><span>1일 소정근로시간</span><strong>${dailyHours}시간</strong></div><div class="row"><span>미사용 연차</span><strong>${days}일</strong></div>`}
+document.getElementById('form').onsubmit=e=>{e.preventDefault();calculate()};['wage','hours','dailyHours','days'].forEach(id=>document.getElementById(id).addEventListener('input',calculate));
 // 현재 입력값을 URL에 저장해 결과를 공유할 수 있게 합니다.
-document.getElementById('share').onclick=async()=>{const p=new URLSearchParams({wage:document.getElementById('wage').value,hours:document.getElementById('hours').value,days:document.getElementById('days').value});history.replaceState(null,'','?'+p);const url=location.href;try{if(navigator.share)await navigator.share({title:'FLiCK Calc - 연차수당 계산기',url});else await navigator.clipboard.writeText(url)}catch(e){}};
+document.getElementById('share').onclick=async()=>{const p=new URLSearchParams({wage:document.getElementById('wage').value,hours:document.getElementById('hours').value,dailyHours:document.getElementById('dailyHours').value,days:document.getElementById('days').value});history.replaceState(null,'','?'+p);const url=location.href;try{if(navigator.share)await navigator.share({title:'FLiCK Calc - 연차수당 계산기',url});else await navigator.clipboard.writeText(url)}catch(e){}};
 // 기본값으로 되돌립니다.
-document.getElementById('reset').onclick=()=>{document.getElementById('wage').value=3000000;document.getElementById('hours').value=209;document.getElementById('days').value=10;calculate()};
+document.getElementById('reset').onclick=()=>{document.getElementById('wage').value=3000000;document.getElementById('hours').value=209;document.getElementById('dailyHours').value=8;document.getElementById('days').value=10;calculate()};
 // 공유 링크로 들어왔으면 저장된 입력값을 복원합니다.
-const p=new URLSearchParams(location.search);['wage','hours','days'].forEach(id=>{if(p.has(id))document.getElementById(id).value=p.get(id)});calculate();
+const p=new URLSearchParams(location.search);['wage','hours','dailyHours','days'].forEach(id=>{if(p.has(id))document.getElementById(id).value=p.get(id)});calculate();
 </script></body></html>
