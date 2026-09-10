@@ -26,6 +26,14 @@
       "status": "active"
     },
     {
+      "id": "weekly-holiday-pay",
+      "name": "주휴수당 계산기",
+      "url": "/weekly-holiday-pay.html",
+      "category": "직장·급여",
+      "description": "주 소정근로시간과 시급을 기준으로 예상 주휴수당을 계산합니다.",
+      "status": "active"
+    },
+    {
       "id": "loan",
       "name": "대출이자 계산기",
       "url": "/loan.html",
