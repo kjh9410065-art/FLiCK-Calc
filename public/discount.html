@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>할인율 계산기 | FLiCK Calc</title>
+  <meta name="description" content="상품 가격과 할인율을 입력해 할인 금액과 할인 후 가격을 간편하게 계산합니다.">
+  <link rel="canonical" href="https://flick-calc.carpick.workers.dev/discount.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="할인율 계산기 | FLiCK Calc">
+  <meta property="og:description" content="상품 가격과 할인율을 입력해 할인 금액과 할인 후 가격을 간편하게 계산합니다.">
+  <meta property="og:url" content="https://flick-calc.carpick.workers.dev/discount.html">
+  <style>
+    :root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--primary:#2563eb;--soft:#f8fafc}
+    html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--primary:#4f8cff;--soft:#11141a}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}.theme{border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--text);padding:9px 13px;font-weight:800;cursor:pointer}h1{margin:18px 0 7px;font-size:clamp(30px,8vw,42px)}.sub{margin:0 0 22px;color:var(--muted);font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px}.field{margin-bottom:14px}.field label{display:block;margin-bottom:7px;font-size:13px;font-weight:800}.field input{width:100%;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--soft);color:var(--text);font-size:16px;outline:none}.field input:focus{border-color:var(--primary)}.unit{margin-top:5px;color:var(--muted);font-size:12px}.result{margin-top:18px;padding:17px;border-radius:14px;background:var(--soft);border:1px solid var(--border)}.row{display:flex;justify-content:space-between;gap:16px;padding:7px 0;font-size:14px}.row strong{font-size:16px}.row.total{border-top:1px solid var(--border);margin-top:5px;padding-top:13px;font-weight:900}.notice{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.65}.links{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}.links a{text-decoration:none;color:var(--primary);font-size:13px;font-weight:800}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="top"><div class="brand">FLiCK CALC</div><button class="theme" id="theme" type="button">🌙 다크모드</button></div>
+    <h1>할인율 계산기</h1>
+    <p class="sub">상품 가격과 할인율을 입력하면 할인 금액과 최종 가격을 바로 확인할 수 있습니다.</p>
+
+    <section class="card">
+      <div class="field"><label for="price">원래 가격</label><input id="price" type="number" inputmode="numeric" min="0" step="100" value="100000"><div class="unit">원</div></div>
+      <div class="field"><label for="rate">할인율</label><input id="rate" type="number" inputmode="decimal" min="0" max="100" step="0.1" value="20"><div class="unit">%</div></div>
+      <div class="result" aria-live="polite">
+        <div class="row"><span>할인 금액</span><strong id="discount">20,000원</strong></div>
+        <div class="row total"><span>할인 후 가격</span><strong id="final">80,000원</strong></div>
+      </div>
+      <p class="notice">할인율은 0~100% 범위에서 계산합니다. 실제 판매 가격은 판매처의 할인 조건이나 반올림 기준에 따라 달라질 수 있습니다.</p>
+    </section>
+    <div class="links"><a href="/calculator-list.html">← 계산기 목록</a><a href="/percent.html">퍼센트 계산기</a></div>
+  </main>
+  <script>
+    // 저장된 테마를 적용하고, 저장값이 없으면 기기 설정을 따릅니다.
+    const root=document.documentElement,theme=document.getElementById('theme'),saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
+    function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
+
+    // 원래 가격에서 할인 금액과 할인 후 가격을 계산합니다.
+    const price=document.getElementById('price'),rate=document.getElementById('rate'),discount=document.getElementById('discount'),final=document.getElementById('final');
+    const money=n=>Math.round(n).toLocaleString('ko-KR')+'원';
+    function calculate(){
+      const base=Math.max(0,Number(price.value)||0);const percent=Math.min(100,Math.max(0,Number(rate.value)||0));
+      const discountAmount=base*percent/100;const finalAmount=base-discountAmount;
+      discount.textContent=money(discountAmount);final.textContent=money(finalAmount);
+    }
+    price.addEventListener('input',calculate);rate.addEventListener('input',calculate);calculate();
+  </script>
+</body>
+</html>
