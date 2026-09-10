@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f7fb">
+<title>FLiCK Calc - 대출이자 계산기</title><meta name="description" content="대출 원금, 금리, 기간을 입력해 월 상환액과 총 이자를 계산합니다.">
+<style>
+:root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--input:#fff;--primary:#2563eb;--soft:#f8fafc;--result:#eef4ff}
+html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--input:#11141a;--primary:#4f8cff;--soft:#11141a;--result:#182846}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 20px));margin:auto;padding:22px 0 48px}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}header{padding:8px 4px 18px;position:relative}h1{margin:8px 0 6px;font-size:clamp(28px,8vw,40px)}.sub{margin:0;color:var(--muted);font-size:14px}.theme{position:absolute;right:0;top:0;border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--text);padding:9px 12px;font-weight:800;cursor:pointer}.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px;box-shadow:0 10px 30px rgba(16,24,40,.06)}.field{margin-bottom:14px}label{display:block;margin-bottom:7px;font-size:14px;font-weight:800}.row{display:flex;gap:8px;align-items:center}input{width:100%;min-height:50px;border:1px solid var(--border);border-radius:12px;padding:0 13px;background:var(--input);color:var(--text);font-size:16px}.unit{color:var(--muted);white-space:nowrap;font-size:14px}.quick{display:flex;gap:7px;overflow:auto;margin:-2px 0 14px}.quick button{flex:0 0 auto;border:1px solid var(--border);border-radius:10px;background:var(--soft);color:var(--text);padding:9px 11px;font-weight:800}.calc{width:100%;min-height:54px;border:0;border-radius:13px;background:var(--primary);color:#fff;font-size:16px;font-weight:900}.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.tool{min-height:44px;border:1px solid var(--border);border-radius:11px;background:var(--soft);color:var(--text);font-weight:800}.result{margin-top:18px;padding:20px;border-radius:17px;background:var(--result);text-align:center}.label{font-size:13px;color:var(--muted)}.big{margin-top:5px;font-size:clamp(31px,9vw,46px);font-weight:950;color:var(--primary)}.summary{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.box{padding:13px 9px;border:1px solid var(--border);border-radius:13px;background:var(--soft)}.small{font-size:11px;color:var(--muted)}.value{margin-top:4px;font-weight:900}.details{margin-top:18px;border-top:1px solid var(--border)}.detail{display:flex;justify-content:space-between;padding:13px 2px;border-bottom:1px solid var(--border);font-size:14px}.detail span{color:var(--muted)}.notice{font-size:12px;line-height:1.65;color:var(--muted);margin:15px 2px 0}@media(max-width:420px){.theme{position:relative;right:auto;top:auto;margin-top:13px}}
+</style></head>
+<body><main class="wrap"><header><button class="theme" id="theme" type="button">🌙 다크모드</button><div class="brand">FLiCK CALC</div><h1>대출이자 계산기</h1><p class="sub">대출 원금과 금리, 기간을 입력해 월 상환액과 총 이자를 확인하세요.</p></header>
+<section class="card"><form id="form">
+<div class="field"><label for="principal">대출 원금</label><div class="row"><input id="principal" type="number" min="0" step="100000" value="100000000"><span class="unit">원</span></div></div>
+<div class="quick"><button type="button" data-value="50000000">5천만원</button><button type="button" data-value="100000000">1억원</button><button type="button" data-value="200000000">2억원</button><button type="button" data-value="300000000">3억원</button></div>
+<div class="field"><label for="rate">연 금리</label><div class="row"><input id="rate" type="number" min="0" max="100" step="0.01" value="4"><span class="unit">%</span></div></div>
+<div class="field"><label for="years">상환 기간</label><div class="row"><input id="years" type="number" min="1" max="50" step="1" value="30"><span class="unit">년</span></div></div>
+<div class="field"><label for="method">상환 방식</label><select id="method" style="width:100%;min-height:50px;border:1px solid var(--border);border-radius:12px;padding:0 13px;background:var(--input);color:var(--text);font-size:16px"><option value="equal">원리금균등상환</option><option value="principal">원금균등상환</option></select></div>
+<button class="calc" type="submit">대출 상환액 계산하기</button></form>
+<div class="tools"><button class="tool" id="share" type="button">🔗 결과 공유</button><button class="tool" id="reset" type="button">↺ 초기화</button></div>
+<section class="result"><div class="label" id="resultLabel">첫 달 월 상환액</div><div class="big" id="monthly">-</div></section>
+<div class="summary"><div class="box"><div class="small">총 상환액</div><div class="value" id="total">-</div></div><div class="box"><div class="small">총 이자</div><div class="value" id="interest">-</div></div></div>
+<div class="details" id="details"></div><p class="notice">※ 원리금균등·원금균등 방식의 단순 시뮬레이션입니다. 실제 상환액은 금융기관의 금리 적용 방식, 실행일, 우대금리, 중도상환 등에 따라 달라질 수 있습니다.</p></section></main>
+<script>
+// 금액을 원화 표시로 변환합니다.
+const won=v=>Math.round(v).toLocaleString('ko-KR')+'원';const root=document.documentElement,theme=document.getElementById('theme');
+// 사용자의 다크모드 선택을 저장합니다.
+const saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme:dark)').matches))root.classList.add('dark');function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}theme.onclick=()=>{const d=root.classList.toggle('dark');localStorage.setItem('flick-theme',d?'dark':'light');updateTheme()};updateTheme();
+// 입력값을 읽고 계산합니다.
+function calculate(){const p=Math.max(0,Number(document.getElementById('principal').value)||0),annual=Math.max(0,Number(document.getElementById('rate').value)||0),years=Math.max(1,Number(document.getElementById('years').value)||1),n=years*12,r=annual/100/12,method=document.getElementById('method').value;let payment=0,total=0,interest=0;
+if(method==='equal'){// 원리금균등: 매월 같은 금액을 상환합니다.
+payment=r===0?p/n:p*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);total=payment*n;interest=total-p}else{// 원금균등: 원금을 매월 동일하게 나누고 이자는 잔액에 따라 감소합니다.
+const principalPart=p/n;let balance=p;for(let i=0;i<n;i++){const monthPayment=principalPart+balance*r;total+=monthPayment;balance=Math.max(0,balance-principalPart)}payment=principalPart+p*r;interest=total-p}
+document.getElementById('resultLabel').textContent=method==='equal'?'월 상환액':'첫 달 월 상환액';document.getElementById('monthly').textContent=won(payment);document.getElementById('total').textContent=won(total);document.getElementById('interest').textContent=won(interest);document.getElementById('details').innerHTML=`<div class="detail"><span>대출 원금</span><strong>${won(p)}</strong></div><div class="detail"><span>연 금리</span><strong>${annual.toFixed(2)}%</strong></div><div class="detail"><span>상환 기간</span><strong>${years}년 (${n}개월)</strong></div><div class="detail"><span>상환 방식</span><strong>${method==='equal'?'원리금균등':'원금균등'}</strong></div>`;syncUrl()}
+// 공유 URL에 현재 입력값을 저장합니다.
+function syncUrl(){const q=new URLSearchParams({principal:principal.value,rate:rate.value,years:years.value,method:method.value});history.replaceState(null,'','?'+q)}
+// 공유 URL이 있으면 입력값을 복원합니다.
+const q=new URLSearchParams(location.search);['principal','rate','years','method'].forEach(id=>{if(q.has(id))document.getElementById(id).value=q.get(id)});
+form.addEventListener('submit',e=>{e.preventDefault();calculate()});[principal,rate,years,method].forEach(el=>el.addEventListener('input',calculate));method.addEventListener('change',calculate);
+document.querySelectorAll('[data-value]').forEach(b=>b.onclick=()=>{principal.value=b.dataset.value;calculate()});
+share.onclick=async()=>{syncUrl();try{if(navigator.share)await navigator.share({title:'FLiCK Calc - 대출이자 계산기',url:location.href});else await navigator.clipboard.writeText(location.href)}catch(e){}};
+reset.onclick=()=>{principal.value=100000000;rate.value=4;years.value=30;method.value='equal';calculate()};calculate();
+</script></body></html>
