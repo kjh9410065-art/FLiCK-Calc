@@ -1,41 +1,16 @@
 <!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f5f7fb">
-  <title>계산기 목록 | FLiCK Calc</title>
-  <meta name="description" content="연봉, 퇴직금, 연차수당, 주휴수당, 부가세, 대출, 예금·적금 등 생활에 필요한 계산기를 한곳에서 이용하세요.">
-  <link rel="canonical" href="https://flick-calc.carpick.workers.dev/calculator-list.html">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="계산기 목록 | FLiCK Calc">
-  <meta property="og:description" content="생활에 필요한 다양한 계산기를 한곳에서 간편하게 이용하세요.">
-  <meta property="og:url" content="https://flick-calc.carpick.workers.dev/calculator-list.html">
-  <style>
-    :root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--primary:#2563eb;--soft:#f8fafc}
-    html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--primary:#4f8cff;--soft:#11141a}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}h1{margin:10px 0 7px;font-size:clamp(30px,8vw,42px)}.sub{margin:0 0 22px;color:var(--muted);font-size:14px}.tools{display:flex;justify-content:flex-end;margin-bottom:10px}.theme{border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--text);padding:9px 13px;font-weight:800;cursor:pointer}.grid{display:grid;gap:12px}.card{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:19px;transition:transform .15s,border-color .15s}.card:hover{transform:translateY(-2px);border-color:var(--primary)}.category{font-size:11px;font-weight:900;color:var(--primary);letter-spacing:.05em}.title{margin-top:6px;font-size:19px;font-weight:900}.desc{margin-top:5px;color:var(--muted);font-size:13px;line-height:1.5}.arrow{margin-top:13px;font-size:13px;font-weight:800;color:var(--primary)}
-  </style>
-</head>
-<body>
-  <main class="wrap">
-    <div class="tools"><button class="theme" id="theme" type="button">🌙 다크모드</button></div>
-    <div class="brand">FLiCK CALC</div><h1>계산기 모음</h1><p class="sub">생활에 필요한 계산기를 한곳에서 간편하게 이용하세요.</p>
-    <section class="grid" aria-label="계산기 목록">
-      <!-- 검색엔진이 JavaScript 없이도 모든 계산기 페이지를 발견할 수 있도록 일반 HTML 링크를 사용합니다. -->
-      <a class="card" href="/salary.html"><div class="category">직장·급여</div><div class="title">연봉 실수령액 계산기</div><div class="desc">연봉을 입력하면 월 예상 실수령액을 확인할 수 있습니다.</div><div class="arrow">연봉 실수령액 계산하기 →</div></a>
-      <a class="card" href="/retirement.html"><div class="category">직장·급여</div><div class="title">퇴직금 계산기</div><div class="desc">평균임금과 근속기간을 기준으로 예상 퇴직금을 계산합니다.</div><div class="arrow">퇴직금 계산하기 →</div></a>
-      <a class="card" href="/annual-leave.html"><div class="category">직장·급여</div><div class="title">연차수당 계산기</div><div class="desc">월 통상임금과 미사용 연차를 기준으로 예상 연차수당을 계산합니다.</div><div class="arrow">연차수당 계산하기 →</div></a>
-      <a class="card" href="/weekly-holiday-pay.html"><div class="category">직장·급여</div><div class="title">주휴수당 계산기</div><div class="desc">주 소정근로시간과 시급을 기준으로 예상 주휴수당을 계산합니다.</div><div class="arrow">주휴수당 계산하기 →</div></a>
-      <a class="card" href="/loan.html"><div class="category">금융·대출</div><div class="title">대출이자 계산기</div><div class="desc">대출 원금과 금리, 기간으로 월 상환액과 총 이자를 계산합니다.</div><div class="arrow">대출이자 계산하기 →</div></a>
-      <a class="card" href="/deposit-savings.html"><div class="category">금융·저축</div><div class="title">예금·적금 계산기</div><div class="desc">예금과 적금의 예상 이자와 만기 금액을 계산합니다.</div><div class="arrow">예금·적금 계산하기 →</div></a>
-      <a class="card" href="/vat.html"><div class="category">세금·사업</div><div class="title">부가세 계산기</div><div class="desc">공급가액 또는 부가세 포함 금액을 기준으로 부가세를 계산합니다.</div><div class="arrow">부가세 계산하기 →</div></a>
-    </section>
-  </main>
-  <script>
-    // 저장된 테마를 불러와 화면 모드를 유지합니다.
-    const root=document.documentElement,theme=document.getElementById('theme'),saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
-    function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
-  </script>
-</body>
-</html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f5f7fb"><title>계산기 목록 | FLiCK Calc</title><meta name="description" content="연봉, 퇴직금, 연차수당, 주휴수당, 부가세, 퍼센트, 대출, 예금·적금 등 생활에 필요한 계산기를 한곳에서 이용하세요."><link rel="canonical" href="https://flick-calc.carpick.workers.dev/calculator-list.html"><meta property="og:type" content="website"><meta property="og:title" content="계산기 목록 | FLiCK Calc"><meta property="og:description" content="생활에 필요한 다양한 계산기를 한곳에서 간편하게 이용하세요."><meta property="og:url" content="https://flick-calc.carpick.workers.dev/calculator-list.html"><style>
+:root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--primary:#2563eb;--soft:#f8fafc}html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--primary:#4f8cff;--soft:#11141a}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}h1{margin:10px 0 7px;font-size:clamp(30px,8vw,42px)}.sub{margin:0 0 22px;color:var(--muted);font-size:14px}.tools{display:flex;justify-content:flex-end;margin-bottom:10px}.theme{border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--text);padding:9px 13px;font-weight:800;cursor:pointer}.grid{display:grid;gap:12px}.card{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:19px;transition:transform .15s,border-color .15s}.card:hover{transform:translateY(-2px);border-color:var(--primary)}.category{font-size:11px;font-weight:900;color:var(--primary);letter-spacing:.05em}.title{margin-top:6px;font-size:19px;font-weight:900}.desc{margin-top:5px;color:var(--muted);font-size:13px;line-height:1.5}.arrow{margin-top:13px;font-size:13px;font-weight:800;color:var(--primary)}
+</style></head><body><main class="wrap"><div class="tools"><button class="theme" id="theme" type="button">🌙 다크모드</button></div><div class="brand">FLiCK CALC</div><h1>계산기 모음</h1><p class="sub">생활에 필요한 계산기를 한곳에서 간편하게 이용하세요.</p><section class="grid" aria-label="계산기 목록">
+<a class="card" href="/salary.html"><div class="category">직장·급여</div><div class="title">연봉 실수령액 계산기</div><div class="desc">연봉을 입력하면 월 예상 실수령액을 확인할 수 있습니다.</div><div class="arrow">연봉 실수령액 계산하기 →</div></a>
+<a class="card" href="/retirement.html"><div class="category">직장·급여</div><div class="title">퇴직금 계산기</div><div class="desc">평균임금과 근속기간을 기준으로 예상 퇴직금을 계산합니다.</div><div class="arrow">퇴직금 계산하기 →</div></a>
+<a class="card" href="/annual-leave.html"><div class="category">직장·급여</div><div class="title">연차수당 계산기</div><div class="desc">월 통상임금과 미사용 연차를 기준으로 예상 연차수당을 계산합니다.</div><div class="arrow">연차수당 계산하기 →</div></a>
+<a class="card" href="/weekly-holiday-pay.html"><div class="category">직장·급여</div><div class="title">주휴수당 계산기</div><div class="desc">주 소정근로시간과 시급을 기준으로 예상 주휴수당을 계산합니다.</div><div class="arrow">주휴수당 계산하기 →</div></a>
+<a class="card" href="/loan.html"><div class="category">금융·대출</div><div class="title">대출이자 계산기</div><div class="desc">대출 원금과 금리, 기간으로 월 상환액과 총 이자를 계산합니다.</div><div class="arrow">대출이자 계산하기 →</div></a>
+<a class="card" href="/deposit-savings.html"><div class="category">금융·저축</div><div class="title">예금·적금 계산기</div><div class="desc">예금과 적금의 예상 이자와 만기 금액을 계산합니다.</div><div class="arrow">예금·적금 계산하기 →</div></a>
+<a class="card" href="/vat.html"><div class="category">세금·사업</div><div class="title">부가세 계산기</div><div class="desc">공급가액 또는 부가세 포함 금액을 기준으로 부가세를 계산합니다.</div><div class="arrow">부가세 계산하기 →</div></a>
+<a class="card" href="/percent.html"><div class="category">수학·비율</div><div class="title">퍼센트 계산기</div><div class="desc">퍼센트, 비율, 증감률, 증가·감소 후 금액을 계산합니다.</div><div class="arrow">퍼센트 계산하기 →</div></a>
+</section></main><script>
+const root=document.documentElement,theme=document.getElementById('theme'),saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
+</script></body></html>
