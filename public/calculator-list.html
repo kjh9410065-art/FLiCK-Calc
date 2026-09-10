@@ -23,14 +23,9 @@ html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#
 <div class="brand">FLiCK CALC</div>
 <h1>계산기 모음</h1>
 <p class="sub">원하는 계산기를 검색하거나 카테고리로 빠르게 찾아보세요.</p>
-
-<!-- 검색창: 계산기 이름·설명·카테고리를 실시간으로 검색합니다. -->
 <input class="search" id="search" type="search" placeholder="🔍 계산기 검색" aria-label="계산기 검색">
-
-<!-- 카테고리 필터: 현재 등록된 계산기에서 사용하는 카테고리를 한 번에 선택합니다. -->
 <div class="filters" id="filters" role="group" aria-label="계산기 카테고리"></div>
 <p class="count" id="count" aria-live="polite"></p>
-
 <section class="grid" id="grid" aria-label="계산기 목록">
 <a class="card" data-category="직장·급여" data-keywords="연봉 실수령액 월급 급여" href="/salary.html"><div class="category">직장·급여</div><div class="title">연봉 실수령액 계산기</div><div class="desc">연봉을 입력하면 월 예상 실수령액을 확인할 수 있습니다.</div><div class="arrow">연봉 실수령액 계산하기 →</div></a>
 <a class="card" data-category="직장·급여" data-keywords="퇴직금 평균임금 근속기간" href="/retirement.html"><div class="category">직장·급여</div><div class="title">퇴직금 계산기</div><div class="desc">평균임금과 근속기간을 기준으로 예상 퇴직금을 계산합니다.</div><div class="arrow">퇴직금 계산하기 →</div></a>
@@ -48,12 +43,10 @@ html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#
 <script>
 // 저장된 테마를 불러와 화면 모드를 유지합니다.
 const root=document.documentElement,theme=document.getElementById('theme'),saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
-
 // 카드에서 실제 사용 중인 카테고리를 자동으로 모아 필터 버튼을 만듭니다.
 const cards=[...document.querySelectorAll('.card')],filters=document.getElementById('filters'),search=document.getElementById('search'),count=document.getElementById('count'),empty=document.getElementById('empty');
 const categories=['전체',...new Set(cards.map(card=>card.dataset.category))];let activeCategory='전체';
 categories.forEach(category=>{const button=document.createElement('button');button.className='filter'+(category==='전체'?' active':'');button.type='button';button.textContent=category;button.addEventListener('click',()=>{activeCategory=category;document.querySelectorAll('.filter').forEach(item=>item.classList.toggle('active',item===button));filterCards()});filters.appendChild(button)});
-
 // 검색어와 선택한 카테고리를 동시에 적용해 필요한 카드만 보여줍니다.
 function filterCards(){const keyword=search.value.trim().toLowerCase();let visible=0;cards.forEach(card=>{const text=(card.textContent+' '+card.dataset.keywords).toLowerCase();const categoryOK=activeCategory==='전체'||card.dataset.category===activeCategory;const searchOK=!keyword||text.includes(keyword);const show=categoryOK&&searchOK;card.classList.toggle('hidden',!show);if(show)visible++});count.textContent=`전체 ${cards.length}개 중 ${visible}개 표시`;empty.classList.toggle('show',visible===0)}
 search.addEventListener('input',filterCards);filterCards();
