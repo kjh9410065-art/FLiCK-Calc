@@ -24,6 +24,14 @@
       "category": "직장·급여",
       "description": "월 통상임금과 미사용 연차를 기준으로 예상 연차수당을 계산합니다.",
       "status": "active"
+    },
+    {
+      "id": "loan",
+      "name": "대출이자 계산기",
+      "url": "/loan.html",
+      "category": "금융·대출",
+      "description": "대출 원금과 금리, 기간으로 월 상환액과 총 이자를 계산합니다.",
+      "status": "active"
     }
   ]
 }
