@@ -9,6 +9,7 @@
     {"id":"loan","name":"대출이자 계산기","url":"/loan.html","category":"금융","description":"대출 원금과 금리, 기간으로 월 상환액과 총 이자를 계산합니다.","status":"active"},
     {"id":"deposit-savings","name":"예금·적금 계산기","url":"/deposit-savings.html","category":"금융","description":"예금과 적금의 예상 이자와 만기 금액을 계산합니다.","status":"active"},
     {"id":"compound-interest","name":"복리 계산기","url":"/compound-interest.html","category":"금융","description":"원금과 이율, 기간을 기준으로 월 복리 예상 금액과 이자를 계산합니다.","status":"active"},
+    {"id":"investment-return","name":"투자 수익률 계산기","url":"/investment-return.html","category":"금융","description":"투자 원금과 현재 가치를 기준으로 수익금과 수익률을 계산합니다.","status":"active"},
     {"id":"vat","name":"부가세 계산기","url":"/vat.html","category":"세금·사업","description":"공급가액 또는 부가세 포함 금액을 기준으로 부가세를 계산합니다.","status":"active"},
     {"id":"percent","name":"퍼센트 계산기","url":"/percent.html","category":"수학","description":"퍼센트, 비율, 증감률, 증가·감소 후 금액을 계산합니다.","status":"active"},
     {"id":"discount","name":"할인율 계산기","url":"/discount.html","category":"생활","description":"상품 가격과 할인율을 기준으로 할인 금액과 최종 가격을 계산합니다.","status":"active"},
