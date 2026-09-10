@@ -6,6 +6,11 @@
   <meta name="theme-color" content="#f5f7fb">
   <title>FLiCK Calc - 퇴직금 계산기</title>
   <meta name="description" content="퇴직 전 3개월 임금과 재직기간을 입력해 예상 퇴직금을 계산합니다.">
+  <link rel="canonical" href="https://flick-calc.carpick.workers.dev/retirement.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="FLiCK Calc - 퇴직금 계산기">
+  <meta property="og:description" content="퇴직 전 3개월 임금과 재직기간을 입력해 예상 퇴직금을 계산합니다.">
+  <meta property="og:url" content="https://flick-calc.carpick.workers.dev/retirement.html">
   <style>
     :root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--input:#fff;--input-border:#d0d5dd;--primary:#2563eb;--primary-dark:#1749b5;--result:#eef4ff;--line:#eaecf0;--shadow:rgba(16,24,40,.06);--soft:#f8fafc}
     html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--input:#11141a;--input-border:#3b424f;--primary:#4f8cff;--primary-dark:#8db3ff;--result:#182846;--line:#2b303a;--shadow:rgba(0,0,0,.28);--soft:#11141a}
@@ -44,32 +49,14 @@
     </section>
   </main>
   <script>
-    // 원화 금액을 읽기 쉽게 표시합니다.
     const won=v=>Math.round(v).toLocaleString('ko-KR')+'원';
     const $=id=>document.getElementById(id);
     const root=document.documentElement;
-    // 사용자가 선택한 다크모드 상태를 저장합니다.
     const saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
     function themeText(){ $('theme').textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'; }
     $('theme').addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');themeText()});themeText();
-
-    // 입력값을 숫자로 변환하고 최소값을 적용합니다.
     function num(id,min){const v=Number($(id).value);return Number.isFinite(v)?Math.max(min,v):min;}
-
-    // 고용노동부 공식 산식: 평균임금 × 30일 × 총 재직일수 / 365일.
-    function calculate(){
-      const pay=num('pay',0),days3=num('days3',1),service=num('service',0);
-      const daily=pay/days3;
-      const thirty=daily*30;
-      const severance=thirty*service/365;
-      $('daily').textContent=won(daily);
-      $('thirty').textContent=won(thirty);
-      $('result').textContent=won(severance);
-      // 공유할 수 있도록 현재 계산 조건을 URL에 저장합니다.
-      const p=new URLSearchParams({pay:Math.round(pay),days3:Math.round(days3),service:Math.round(service)});history.replaceState(null,'','?'+p.toString());
-    }
-
-    // 공유 링크로 들어왔으면 입력값을 복원합니다.
+    function calculate(){const pay=num('pay',0),days3=num('days3',1),service=num('service',0);const daily=pay/days3;const thirty=daily*30;const severance=thirty*service/365;$('daily').textContent=won(daily);$('thirty').textContent=won(thirty);$('result').textContent=won(severance);const p=new URLSearchParams({pay:Math.round(pay),days3:Math.round(days3),service:Math.round(service)});history.replaceState(null,'','?'+p.toString());}
     const params=new URLSearchParams(location.search);['pay','days3','service'].forEach(id=>{if(params.has(id))$(id).value=params.get(id)});
     $('form').addEventListener('submit',e=>{e.preventDefault();calculate();$('status').textContent='계산이 완료되었습니다.';});
     $('share').addEventListener('click',async()=>{calculate();try{if(navigator.share){await navigator.share({title:'FLiCK Calc - 퇴직금 계산기',url:location.href});}else{await navigator.clipboard.writeText(location.href);$('status').textContent='계산 링크를 복사했습니다.';}}catch(e){}});
