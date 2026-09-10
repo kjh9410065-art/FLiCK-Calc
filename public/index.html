@@ -15,6 +15,7 @@
 <a class="card" data-category="날짜·시간" href="/date-difference.html"><div class="category">날짜·시간</div><div class="title">날짜 차이 계산기</div><div class="desc">두 날짜 사이의 기간과 일수를 계산합니다.</div><div class="arrow">날짜 차이 계산하기 →</div></a>
 <a class="card" data-category="날짜·시간" href="/dday.html"><div class="category">날짜·시간</div><div class="title">D-day 계산기</div><div class="desc">목표 날짜를 입력하면 오늘을 기준으로 D-day를 계산합니다.</div><div class="arrow">D-day 계산하기 →</div></a>
 <a class="card" data-category="날짜·시간" href="/age.html"><div class="category">날짜·시간</div><div class="title">나이 계산기</div><div class="desc">생년월일을 입력하면 만 나이와 다음 생일까지 남은 날짜를 계산합니다.</div><div class="arrow">나이 계산하기 →</div></a>
+<a class="card" data-category="날짜·시간" href="/time-duration.html"><div class="category">날짜·시간</div><div class="title">시간 계산기</div><div class="desc">시작 시간과 종료 시간 사이의 경과 시간을 계산합니다.</div><div class="arrow">시간 계산하기 →</div></a>
 </section><div class="empty" id="empty">해당 카테고리에 계산기가 없습니다.</div></main><script>// 저장된 테마를 불러와 라이트/다크 모드를 유지합니다.
 const root=document.documentElement,theme=document.getElementById('theme'),saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
 // 카드의 카테고리를 읽어 홈페이지용 필터 버튼을 자동으로 생성합니다.
