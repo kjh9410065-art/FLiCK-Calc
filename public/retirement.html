@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f5f7fb">
-  <title>FLiCK Calc - 퇴직금 계산기</title>
+  <title>Noviq - 퇴직금 계산기</title>
   <meta name="description" content="퇴직 전 3개월 임금과 재직기간을 입력해 예상 퇴직금을 계산합니다.">
-  <link rel="canonical" href="https://flick-calc.carpick.workers.dev/retirement.html">
+  <link rel="canonical" href="https://noviq.tcflick.com/retirement.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="FLiCK Calc - 퇴직금 계산기">
+  <meta property="og:title" content="Noviq - 퇴직금 계산기">
   <meta property="og:description" content="퇴직 전 3개월 임금과 재직기간을 입력해 예상 퇴직금을 계산합니다.">
-  <meta property="og:url" content="https://flick-calc.carpick.workers.dev/retirement.html">
+  <meta property="og:url" content="https://noviq.tcflick.com/retirement.html">
   <style>
     :root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--input:#fff;--input-border:#d0d5dd;--primary:#2563eb;--primary-dark:#1749b5;--result:#eef4ff;--line:#eaecf0;--shadow:rgba(16,24,40,.06);--soft:#f8fafc}
     html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--input:#11141a;--input-border:#3b424f;--primary:#4f8cff;--primary-dark:#8db3ff;--result:#182846;--line:#2b303a;--shadow:rgba(0,0,0,.28);--soft:#11141a}
@@ -25,17 +25,18 @@
     .guide{margin-top:22px;padding-top:20px;border-top:1px solid var(--border)}.guide h2{font-size:19px;margin:0 0 9px}.guide p{margin:0 0 14px;font-size:14px;line-height:1.75}.guide ul{margin:0 0 14px;padding-left:20px}.guide li{font-size:14px;line-height:1.75;margin:4px 0}.guide a{color:var(--primary);font-weight:800;text-decoration:none}
     .notice{margin:16px 2px 0;font-size:12px;line-height:1.7;color:var(--muted)}.status{min-height:18px;margin-top:8px;text-align:center;font-size:12px;color:var(--muted)}
     @media(max-width:420px){.wrap{width:calc(100% - 18px);padding-top:16px}.card{padding:16px;border-radius:18px}.theme{position:relative;top:auto;right:auto;margin-top:14px}}
-  </style>
+  .ad-slot{min-height:90px;margin:18px 0;border:1px dashed var(--border);border-radius:14px;background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;letter-spacing:.05em}</style>
 </head>
 <body>
   <main class="wrap">
     <header>
-      <div class="brand">FLiCK CALC</div>
+      <div class="brand">NOVIQ</div>
       <button class="theme" id="theme" type="button">🌙 다크모드</button>
       <h1>퇴직금 계산기</h1>
       <p class="sub">퇴직 전 3개월 임금과 재직기간을 기준으로 예상 퇴직금을 계산합니다.</p>
     </header>
-    <section class="card">
+    <div class="ad-slot" aria-label="광고 영역">광고 영역</div>
+<section class="card">
       <form id="form" autocomplete="off">
         <div class="field"><label for="pay">퇴직 전 3개월 임금 총액</label><div class="input-row"><input id="pay" type="number" inputmode="numeric" min="0" step="10000" value="10000000" required><span class="unit">원</span></div></div>
         <div class="field"><label for="days3">퇴직 전 3개월 총일수</label><div class="input-row"><input id="days3" type="number" inputmode="numeric" min="1" max="366" step="1" value="91" required><span class="unit">일</span></div></div>
@@ -45,6 +46,7 @@
       <div class="tools"><button class="tool" id="share" type="button">🔗 결과 공유</button><button class="tool" id="reset" type="button">↺ 초기화</button></div>
       <div class="status" id="status" role="status" aria-live="polite"></div>
       <section class="result" aria-live="polite" aria-atomic="true"><div class="label">예상 퇴직금</div><div class="amount" id="result">-</div></section>
+<div class="ad-slot" aria-label="광고 영역">광고 영역</div>
       <div class="summary"><div class="summary-card"><div class="summary-label">1일 평균임금</div><div class="summary-value" id="daily">-</div></div><div class="summary-card"><div class="summary-label">30일분 평균임금</div><div class="summary-value" id="thirty">-</div></div></div>
       <section class="guide">
         <h2>퇴직금 계산 방법</h2>
@@ -67,7 +69,7 @@
     function calculate(updateUrl=true){const pay=num('pay',0),days3=num('days3',1),service=num('service',0);const daily=pay/days3;const thirty=daily*30;const severance=thirty*service/365;$('daily').textContent=won(daily);$('thirty').textContent=won(thirty);$('result').textContent=won(severance);if(updateUrl){const p=new URLSearchParams({pay:Math.round(pay),days3:Math.round(days3),service:Math.round(service)});history.replaceState(null,'','?'+p.toString());}}
     const params=new URLSearchParams(location.search);['pay','days3','service'].forEach(id=>{if(params.has(id))$(id).value=params.get(id)});
     $('form').addEventListener('submit',e=>{e.preventDefault();calculate();$('status').textContent='계산이 완료되었습니다.';});
-    $('share').addEventListener('click',async()=>{calculate();try{if(navigator.share){await navigator.share({title:'FLiCK Calc - 퇴직금 계산기',url:location.href});}else{await navigator.clipboard.writeText(location.href);$('status').textContent='계산 링크를 복사했습니다.';}}catch(e){}});
+    $('share').addEventListener('click',async()=>{calculate();try{if(navigator.share){await navigator.share({title:'Noviq - 퇴직금 계산기',url:location.href});}else{await navigator.clipboard.writeText(location.href);$('status').textContent='계산 링크를 복사했습니다.';}}catch(e){}});
     $('reset').addEventListener('click',()=>{ $('pay').value=10000000;$('days3').value=91;$('service').value=3650;history.replaceState(null,'',location.pathname);calculate(false);$('status').textContent='기본값으로 초기화했습니다.'; });
     calculate();
   </script>

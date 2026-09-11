@@ -4,26 +4,27 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f5f7fb">
-  <title>시급 계산기 | FLiCK Calc</title>
+  <title>시급 계산기 | Noviq</title>
   <meta name="description" content="시급을 월급으로, 월급을 시급으로 환산하고 예상 일급과 주급을 계산합니다.">
-  <link rel="canonical" href="https://flick-calc.carpick.workers.dev/hourly-wage.html">
+  <link rel="canonical" href="https://noviq.tcflick.com/hourly-wage.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="시급 계산기 | FLiCK Calc">
+  <meta property="og:title" content="시급 계산기 | Noviq">
   <meta property="og:description" content="시급을 월급으로, 월급을 시급으로 환산하고 예상 일급과 주급을 계산합니다.">
-  <meta property="og:url" content="https://flick-calc.carpick.workers.dev/hourly-wage.html">
+  <meta property="og:url" content="https://noviq.tcflick.com/hourly-wage.html">
   <style>
     :root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--primary:#2563eb;--soft:#f8fafc}
     html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--primary:#4f8cff;--soft:#11141a}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}.theme{border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--text);padding:9px 13px;font-weight:800;cursor:pointer}h1{margin:18px 0 7px;font-size:clamp(30px,8vw,42px)}.sub{margin:0 0 22px;color:var(--muted);font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:12px}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}.tab{border:1px solid var(--border);border-radius:12px;background:var(--soft);color:var(--text);padding:12px 8px;font-weight:800;cursor:pointer}.tab.active{background:var(--primary);border-color:var(--primary);color:#fff}.field{margin-bottom:14px}.field label{display:block;margin-bottom:7px;font-size:13px;font-weight:800}.field input{width:100%;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--soft);color:var(--text);font-size:16px;outline:none}.field input:focus{border-color:var(--primary)}.unit{margin-top:5px;color:var(--muted);font-size:12px}.result{margin-top:18px;padding:17px;border-radius:14px;background:var(--soft);border:1px solid var(--border)}.row{display:flex;justify-content:space-between;gap:16px;padding:7px 0;font-size:14px}.row strong{font-size:16px}.row.total{border-top:1px solid var(--border);margin-top:5px;padding-top:13px;font-weight:900}.notice{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.65}.links{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}.links a{text-decoration:none;color:var(--primary);font-size:13px;font-weight:800}.hidden{display:none}.minimum{margin-top:12px;padding:12px;border-radius:12px;background:var(--soft);font-size:12px;color:var(--muted)}
-  </style>
+  .ad-slot{min-height:90px;margin:18px 0;border:1px dashed var(--border);border-radius:14px;background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;letter-spacing:.05em}</style>
 </head>
 <body>
   <main class="wrap">
-    <div class="top"><div class="brand">FLiCK CALC</div><button class="theme" id="theme" type="button">🌙 다크모드</button></div>
+    <div class="top"><div class="brand">NOVIQ</div><button class="theme" id="theme" type="button">🌙 다크모드</button></div>
     <h1>시급 계산기</h1>
     <p class="sub">시급과 근로시간을 기준으로 예상 일급·주급·월급을 계산하거나 월급에서 시급을 역산합니다.</p>
 
-    <section class="card">
+    <div class="ad-slot" aria-label="광고 영역">광고 영역</div>
+<section class="card">
       <div class="tabs" role="tablist" aria-label="시급 계산 방식">
         <button class="tab active" id="hourlyTab" type="button">시급 → 월급</button>
         <button class="tab" id="monthlyTab" type="button">월급 → 시급</button>
@@ -49,6 +50,7 @@
       <div class="minimum">2026년 최저임금은 <strong>시급 10,320원</strong>이며, 주 40시간·월 209시간 기준 월 환산액은 2,156,880원입니다.</div>
       <p class="notice">월급 환산은 입력한 월 환산시간을 사용한 단순 계산입니다. 실제 임금에는 주휴수당, 유급휴일, 수당·상여금의 최저임금 산입 여부 등 여러 조건이 영향을 줄 수 있습니다.</p>
     </section>
+<div class="ad-slot" aria-label="광고 영역">광고 영역</div>
     <div class="links"><a href="/calculator-list.html">← 계산기 목록</a><a href="/weekly-holiday-pay.html">주휴수당 계산기</a></div>
   </main>
   <script>
