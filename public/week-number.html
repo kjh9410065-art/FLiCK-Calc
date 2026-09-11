@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>주차 계산기 | Noviq</title>
+<meta name="description" content="날짜를 입력하면 ISO 8601 기준 몇 주차인지 계산합니다.">
+<link rel="canonical" href="https://noviq.tcflick.com/week-number.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="주차 계산기 | Noviq">
+<meta property="og:description" content="날짜를 입력하면 ISO 8601 기준 몇 주차인지 계산합니다.">
+<meta property="og:url" content="https://noviq.tcflick.com/week-number.html">
+<style>
+:root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#d9dee8;--primary:#2563eb}html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#353b47;--primary:#4f8cff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(680px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.top{display:flex;justify-content:space-between;align-items:center}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}button,a{font:inherit}.theme,.btn{border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);padding:10px 14px;font-weight:800;cursor:pointer}.theme{border-radius:999px}.card{margin-top:22px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px}h1{margin:0 0 7px;font-size:clamp(29px,8vw,40px)}.sub{margin:0 0 18px;color:var(--muted);font-size:14px}.field{margin-top:14px}.label{display:block;margin-bottom:7px;font-size:13px;font-weight:900}input{width:100%;padding:13px 14px;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font-size:16px}.actions{display:flex;gap:8px;margin-top:14px}.btn{flex:1}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.result{margin-top:18px;padding:18px;border-radius:16px;background:var(--bg);text-align:center}.value{font-size:32px;font-weight:950}.detail{margin-top:7px;color:var(--muted);font-size:13px;line-height:1.6}.links{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.links a{color:var(--primary);font-size:13px;font-weight:800;text-decoration:none}.notice{margin-top:16px;color:var(--muted);font-size:12px;line-height:1.6}
+</style>
+</head>
+<body>
+<main class="wrap">
+<div class="top"><div class="brand">NOVIQ</div><button class="theme" id="theme" type="button">🌙 다크모드</button></div>
+<section class="card">
+<h1>주차 계산기</h1>
+<p class="sub">날짜를 입력하면 ISO 8601 기준 연도와 몇 주차인지 계산합니다.</p>
+<div class="field"><label class="label" for="date">날짜</label><input id="date" type="date"></div>
+<div class="actions"><button class="btn primary" id="calculate" type="button">계산하기</button><button class="btn" id="reset" type="button">초기화</button></div>
+<div class="result"><div class="value" id="result">주차</div><div class="detail" id="detail">날짜를 입력하면 주차를 계산합니다.</div></div>
+<div class="links"><a href="/calculator-list.html">← 계산기 목록</a><a href="/weekday.html">요일 계산기</a><a href="/date-difference.html">날짜 차이</a></div>
+<p class="notice">ISO 8601 기준: 월요일을 한 주의 시작으로 하며, 1월 4일이 포함된 주를 해당 연도의 첫째 주로 계산합니다.</p>
+</section>
+</main>
+<script>
+const root=document.documentElement,theme=document.getElementById('theme');
+// Noviq 전체 페이지에서 다크모드 설정을 유지합니다.
+const saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
+function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
+const date=document.getElementById('date'),result=document.getElementById('result'),detail=document.getElementById('detail');
+function calculate(){
+  if(!date.value){result.textContent='주차';detail.textContent='날짜를 입력하면 주차를 계산합니다.';return}
+  // 입력 날짜를 UTC로 처리해 지역 시간대와 서머타임으로 인한 날짜 오차를 막습니다.
+  const [y,m,d]=date.value.split('-').map(Number),day=new Date(Date.UTC(y,m-1,d));
+  // ISO 주차는 목요일이 속한 연도를 기준으로 결정합니다.
+  const isoDay=day.getUTCDay()||7;day.setUTCDate(day.getUTCDate()+4-isoDay);
+  const isoYear=day.getUTCFullYear(),yearStart=new Date(Date.UTC(isoYear,0,1));
+  const week=Math.ceil((((day-yearStart)/86400000)+1)/7);
+  result.textContent=`${isoYear}년 ${week}주차`;
+  detail.textContent=`${y}년 ${m}월 ${d}일은 ISO 8601 기준 ${isoYear}년 ${week}주차입니다.`;
+}
+date.addEventListener('input',calculate);document.getElementById('calculate').addEventListener('click',calculate);
+document.getElementById('reset').addEventListener('click',()=>{date.value='';calculate()});
+</script>
+</body>
+</html>
