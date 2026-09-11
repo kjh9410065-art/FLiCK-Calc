@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>시간 합산 계산기 | Noviq</title>
+<meta name="description" content="여러 개의 시간을 입력해 총 경과 시간을 계산합니다.">
+<link rel="canonical" href="https://noviq.tcflick.com/time-sum.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="시간 합산 계산기 | Noviq">
+<meta property="og:description" content="여러 개의 시간을 입력해 총 경과 시간을 계산합니다.">
+<meta property="og:url" content="https://noviq.tcflick.com/time-sum.html">
+<style>
+:root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#d9dee8;--primary:#2563eb}html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#353b47;--primary:#4f8cff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(680px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.top{display:flex;justify-content:space-between;align-items:center}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}button{font:inherit}.theme,.btn{border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);padding:10px 14px;font-weight:800;cursor:pointer}.theme{border-radius:999px}.card{margin-top:22px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px}h1{margin:0 0 7px;font-size:clamp(29px,8vw,40px)}.sub{margin:0 0 18px;color:var(--muted);font-size:14px}.field label{display:block;margin-bottom:7px;font-size:13px;font-weight:900}.field textarea{width:100%;min-height:180px;resize:vertical;padding:14px;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font:inherit;font-size:16px;line-height:1.7}.actions{display:flex;gap:8px;margin-top:14px}.btn{flex:1}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.result{margin-top:18px;padding:18px;border-radius:16px;background:var(--bg);text-align:center}.value{font-size:32px;font-weight:950}.detail{margin-top:7px;color:var(--muted);font-size:13px;line-height:1.6}.links{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.links a{color:var(--primary);font-size:13px;font-weight:800;text-decoration:none}.notice{margin-top:16px;color:var(--muted);font-size:12px;line-height:1.6}
+</style>
+</head>
+<body>
+<main class="wrap">
+<div class="top"><div class="brand">NOVIQ</div><button class="theme" id="theme" type="button">🌙 다크모드</button></div>
+<section class="card">
+<h1>시간 합산 계산기</h1>
+<p class="sub">여러 개의 시간을 한 줄에 하나씩 입력해 총 시간을 계산합니다.</p>
+<div class="field"><label for="times">시간 입력</label><textarea id="times" placeholder="예:&#10;1:30&#10;0:45&#10;2:15"></textarea></div>
+<div class="actions"><button class="btn primary" id="calculate" type="button">계산하기</button><button class="btn" id="reset" type="button">초기화</button></div>
+<div class="result"><div class="value" id="result">총 시간</div><div class="detail" id="detail">시간을 입력하면 합산합니다.</div></div>
+<div class="links"><a href="/calculator-list.html">← 계산기 목록</a><a href="/time-duration.html">시간 계산기</a><a href="/date-difference.html">날짜 차이</a></div>
+<p class="notice">입력 형식은 시간:분입니다. 예: 1:30 = 1시간 30분. 빈 줄은 무시하며 잘못된 형식은 계산에서 제외합니다.</p>
+</section>
+</main>
+<script>
+const root=document.documentElement,theme=document.getElementById('theme');
+// Noviq 전체 페이지에서 다크모드 설정을 유지합니다.
+const saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
+function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
+const times=document.getElementById('times'),result=document.getElementById('result'),detail=document.getElementById('detail');
+function calculate(){
+  // 줄마다 시간:분 형식을 읽어 분 단위로 합산합니다.
+  const lines=times.value.split(/\n+/).map(v=>v.trim()).filter(Boolean);let total=0,valid=0;
+  lines.forEach(line=>{const match=line.match(/^(\d+)\s*:\s*(\d{1,2})$/);if(!match)return;const h=Number(match[1]),m=Number(match[2]);if(m>=60)return;total+=h*60+m;valid++});
+  if(!valid){result.textContent='총 시간';detail.textContent='시간을 입력하면 합산합니다.';return}
+  const hours=Math.floor(total/60),minutes=total%60;
+  result.textContent=`${hours.toLocaleString('ko-KR')}시간 ${minutes}분`;
+  detail.textContent=`유효한 ${valid}개 항목을 합산했습니다. 총 ${total.toLocaleString('ko-KR')}분입니다.`;
+}
+times.addEventListener('input',calculate);document.getElementById('calculate').addEventListener('click',calculate);
+document.getElementById('reset').addEventListener('click',()=>{times.value='';calculate()});
+</script>
+</body>
+</html>
