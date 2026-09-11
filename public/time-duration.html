@@ -3,23 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>시간 계산기 | FLiCK Calc</title>
+<title>시간 계산기 | Noviq</title>
 <meta name="description" content="시작 시간과 종료 시간을 입력하면 두 시간 사이의 경과 시간을 계산합니다.">
-<link rel="canonical" href="https://flick-calc.carpick.workers.dev/time-duration.html">
+<link rel="canonical" href="https://noviq.tcflick.com/time-duration.html">
 <meta property="og:type" content="website">
-<meta property="og:title" content="시간 계산기 | FLiCK Calc">
+<meta property="og:title" content="시간 계산기 | Noviq">
 <meta property="og:description" content="시작 시간과 종료 시간을 입력하면 두 시간 사이의 경과 시간을 계산합니다.">
-<meta property="og:url" content="https://flick-calc.carpick.workers.dev/time-duration.html">
+<meta property="og:url" content="https://noviq.tcflick.com/time-duration.html">
 <style>
-:root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#d9dee8;--primary:#2563eb}
-html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#353b47;--primary:#4f8cff}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.tools{display:flex;justify-content:flex-end}.theme,.btn,.link{border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);padding:11px 14px;font-weight:800;cursor:pointer}.brand{margin-top:22px;font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}h1{margin:10px 0 7px;font-size:clamp(30px,8vw,42px)}.sub{margin:0 0 22px;color:var(--muted);font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;margin-bottom:7px;font-size:13px;font-weight:900}.field input{width:100%;padding:14px;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font-size:18px}.result{margin-top:16px;padding:20px;border-radius:14px;background:var(--bg);border:1px solid var(--border);text-align:center}.big{font-size:30px;font-weight:900}.detail{margin-top:7px;color:var(--muted);font-size:13px;line-height:1.5}.actions{display:flex;gap:8px;margin-top:12px}.actions>*{flex:1}.links{display:flex;gap:8px;margin-top:12px}.link{text-align:center;text-decoration:none}.notice{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.6}@media(max-width:480px){.fields{grid-template-columns:1fr}}
+:root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#d9dee8;--primary:#2563eb}html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#353b47;--primary:#4f8cff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.tools{display:flex;justify-content:flex-end}.theme,.btn,.link{border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);padding:11px 14px;font-weight:800;cursor:pointer}.brand{margin-top:22px;font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}h1{margin:10px 0 7px;font-size:clamp(30px,8vw,42px)}.sub{margin:0 0 22px;color:var(--muted);font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;margin-bottom:7px;font-size:13px;font-weight:900}.field input{width:100%;padding:14px;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font-size:18px}.result{margin-top:16px;padding:20px;border-radius:14px;background:var(--bg);border:1px solid var(--border);text-align:center}.big{font-size:30px;font-weight:900}.detail{margin-top:7px;color:var(--muted);font-size:13px;line-height:1.5}.actions{display:flex;gap:8px;margin-top:12px}.actions>*{flex:1}.links{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.link{text-align:center;text-decoration:none}.notice{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.6}@media(max-width:480px){.fields{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <main class="wrap">
 <div class="tools"><button class="theme" id="theme" type="button">🌙 다크모드</button></div>
-<div class="brand">FLiCK CALC</div>
+<div class="brand">NOVIQ</div>
 <h1>시간 계산기</h1>
 <p class="sub">시작 시간과 종료 시간을 입력하면 경과 시간을 계산합니다.</p>
 <section class="card">
@@ -30,8 +28,8 @@ html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#
 <div class="result"><div class="big" id="result">9시간 0분</div><div class="detail" id="detail">두 시간 사이의 경과 시간입니다.</div></div>
 <div class="actions"><button class="btn" id="reset" type="button">초기화</button></div>
 </section>
-<div class="links"><a class="link" href="/calculator-list.html">계산기 목록</a><a class="link" href="/date-difference.html">날짜 차이 계산기</a></div>
-<p class="notice">※ 종료 시간이 시작 시간보다 이르면 다음 날 종료된 것으로 계산합니다. 자정을 넘기는 근무시간 계산에도 사용할 수 있습니다.</p>
+<div class="links"><a class="link" href="/calculator-list.html">계산기 목록</a><a class="link" href="/time-sum.html">시간 합산 계산기</a><a class="link" href="/date-difference.html">날짜 차이 계산기</a></div>
+<p class="notice">※ 종료 시간이 시작 시간보다 이르면 다음 날 종료된 것으로 계산합니다. 자정을 넘기는 시간도 계산할 수 있습니다.</p>
 </main>
 <script>
 // 저장된 테마를 불러와 라이트/다크 모드를 유지합니다.
@@ -41,22 +39,18 @@ function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️
 theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
 const start=document.getElementById('start'),end=document.getElementById('end'),result=document.getElementById('result'),detail=document.getElementById('detail'),reset=document.getElementById('reset');
 function toMinutes(value){
-  // HH:MM 형태의 시간을 자정부터 지난 분으로 변환합니다.
+  // HH:MM 시간을 자정부터 지난 분으로 변환합니다.
   const [hour,minute]=value.split(':').map(Number);return hour*60+minute;
 }
 function calculate(){
-  // 두 시간의 차이를 계산하고 필요하면 자정을 넘긴 것으로 처리합니다.
+  // 두 시간의 차이를 계산하고 종료 시간이 이르면 자정을 넘긴 것으로 처리합니다.
   if(!start.value||!end.value){result.textContent='시간을 입력하세요';detail.textContent='시작 시간과 종료 시간을 입력하면 계산합니다.';return}
-  const startMin=toMinutes(start.value),endMin=toMinutes(end.value);
-  let diff=endMin-startMin;
+  const startMin=toMinutes(start.value),endMin=toMinutes(end.value);let diff=endMin-startMin;
   if(diff<0)diff+=24*60;
-  const hours=Math.floor(diff/60),minutes=diff%60;
-  result.textContent=`${hours}시간 ${minutes}분`;
-  detail.textContent=`총 ${diff.toLocaleString('ko-KR')}분입니다.`;
+  const hours=Math.floor(diff/60),minutes=diff%60;result.textContent=`${hours}시간 ${minutes}분`;detail.textContent=`총 ${diff.toLocaleString('ko-KR')}분입니다.`;
 }
 [start,end].forEach(input=>input.addEventListener('input',calculate));
-reset.addEventListener('click',()=>{start.value='09:00';end.value='18:00';calculate()});
-calculate();
+reset.addEventListener('click',()=>{start.value='09:00';end.value='18:00';calculate()});calculate();
 </script>
 </body>
 </html>
