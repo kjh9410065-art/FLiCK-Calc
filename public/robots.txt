@@ -1,5 +1,5 @@
-# FLiCK Calc 검색엔진 크롤링 정책
+# Noviq 검색엔진 크롤링 정책
 User-agent: *
 Allow: /
 
-Sitemap: https://flick-calc.carpick.workers.dev/sitemap.xml
+Sitemap: https://noviq.tcflick.com/sitemap.xml
