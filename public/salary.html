@@ -3,13 +3,118 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="refresh" content="0;url=/salary-v2.html">
-<link rel="canonical" href="https://flick-calc.carpick.workers.dev/salary-v2.html">
-<title>FLiCK Calc - 연봉 실수령액 계산기</title>
+<meta name="theme-color" content="#f5f7fb">
+<title>Noviq - 연봉 실수령액 계산기</title>
+<meta name="description" content="2026년 근로소득 간이세액표와 4대보험 기준으로 월 예상 실수령액을 계산합니다.">
+<link rel="canonical" href="https://noviq.tcflick.com/salary.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Noviq - 연봉 실수령액 계산기">
+<meta property="og:description" content="2026년 근로소득 간이세액표와 4대보험 기준으로 월 예상 실수령액을 계산합니다.">
+<meta property="og:url" content="https://noviq.tcflick.com/salary.html">
+<style>
+:root{--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--primary:#2563eb;--soft:#f8fafc;--result:#eef4ff}
+html.dark{--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--primary:#4f8cff;--soft:#11141a;--result:#182846}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(720px,calc(100% - 20px));margin:auto;padding:20px 0 48px}header{padding:8px 4px 18px}.brand{font-size:13px;font-weight:900;letter-spacing:.12em;color:var(--primary)}h1{margin:8px 0;font-size:32px}.sub{margin:0;color:var(--muted);font-size:14px}.theme{float:right;margin-top:-28px;padding:9px 12px;border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--text);font-weight:800;cursor:pointer}.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px}.field{margin-bottom:14px}label{display:block;margin-bottom:7px;font-weight:800;font-size:14px}input,select{width:100%;min-height:50px;border:1px solid var(--border);border-radius:11px;padding:0 13px;background:var(--soft);color:var(--text);font-size:16px}.quick{display:flex;gap:7px;overflow:auto;margin:-3px 0 14px}.quick button,.tool{min-height:40px;padding:0 12px;border:1px solid var(--border);border-radius:10px;background:var(--soft);color:var(--text);font-weight:800;white-space:nowrap;cursor:pointer}.calc{width:100%;min-height:54px;border:0;border-radius:12px;background:var(--primary);color:#fff;font-weight:900;font-size:16px;cursor:pointer}.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.result{margin-top:18px;padding:20px;border-radius:17px;background:var(--result);text-align:center}.label{color:var(--muted);font-size:13px}.take{font-size:42px;font-weight:950;color:var(--primary);margin:4px 0}.annual{color:var(--muted);font-size:13px}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.summary div{padding:11px 6px;border:1px solid var(--border);border-radius:11px;background:var(--soft);text-align:center}.summary small{display:block;color:var(--muted)}.summary strong{display:block;margin-top:4px}.rows{margin-top:16px;border-top:1px solid var(--border)}.row{display:flex;justify-content:space-between;padding:12px 2px;border-bottom:1px solid var(--border);font-size:14px}.row span{color:var(--muted)}.notice{color:var(--muted);font-size:12px;line-height:1.65}.status{margin-top:8px;color:var(--muted);font-size:12px}.hint{margin:-7px 0 14px;color:var(--muted);font-size:11px;line-height:1.5}.links{margin-top:18px;text-align:center}.links a{color:var(--primary);font-size:13px;font-weight:800;text-decoration:none}@media(max-width:420px){h1{font-size:28px}.card{padding:15px}.take{font-size:34px}}
+</style>
+<!-- 2026년 간이세액표 데이터는 고정된 공식 자료 사본을 사용합니다. -->
+<script src="https://raw.githubusercontent.com/min5toneko-debug/NetCalculatorWeb/2583638a8b86dd030dbcfaa14f20da5efaadc9e8/js/taxTable.js"></script>
 </head>
-<body>
-<!-- 기존 연봉 계산기 주소의 호환성을 유지하면서 개선된 계산기로 이동합니다. -->
-<script>location.replace('/salary-v2.html'+location.search+location.hash);</script>
-<p><a href="/salary-v2.html">연봉 실수령액 계산기로 이동</a></p>
-</body>
-</html>
+<body><main class="wrap">
+<header><div class="brand">NOVIQ</div><button class="theme" id="theme" type="button">🌙 다크모드</button><h1>연봉 실수령액 계산기</h1><p class="sub">2026년 근로소득 간이세액표와 4대보험 기준으로 월 예상 실수령액을 계산합니다.</p></header>
+<section class="card">
+<form id="form">
+<div class="field"><label for="salary">연봉</label><input id="salary" type="number" min="0" step="10000" value="40000000"></div>
+<div class="quick"><button type="button" data-salary="30000000">3천만원</button><button type="button" data-salary="40000000">4천만원</button><button type="button" data-salary="50000000">5천만원</button><button type="button" data-salary="60000000">6천만원</button><button type="button" data-salary="70000000">7천만원</button></div>
+<div class="field"><label for="nontax">월 비과세 금액</label><input id="nontax" type="number" min="0" step="10000" value="200000"></div>
+<div class="field"><label for="dependents">공제대상 가족 수</label><input id="dependents" type="number" min="1" max="20" step="1" value="1"></div>
+<p class="hint">본인을 포함한 공제대상 가족 수입니다. 8~20세 자녀도 이 숫자에 포함해 입력하세요.</p>
+<div class="field"><label for="children">8세 이상 20세 이하 자녀 수</label><input id="children" type="number" min="0" max="20" step="1" value="0"></div>
+<div class="field"><label for="withholding">원천징수 비율</label><select id="withholding"><option value="0.8">80%</option><option value="1" selected>100%</option><option value="1.2">120%</option></select></div>
+<button class="calc" type="submit">실수령액 계산하기</button>
+</form>
+<div class="tools"><button class="tool" id="share" type="button">🔗 결과 공유</button><button class="tool" id="reset" type="button">↺ 초기화</button></div><div class="status" id="status"></div>
+<section class="result"><div class="label">월 예상 실수령액</div><div class="take" id="take">-</div><div class="annual" id="annual">연간 예상 실수령액 -</div></section>
+<div class="summary"><div><small>월 급여</small><strong id="gross">-</strong></div><div><small>월 공제액</small><strong id="deduction">-</strong></div><div><small>실수령 비율</small><strong id="ratio">-</strong></div></div>
+<div class="rows" id="rows"></div>
+<p class="notice">※ 소득세는 2026년 3월 1일 시행 근로소득 간이세액표를 적용합니다. 실제 급여는 회사의 급여·보험료 산정 방식과 연말정산 결과에 따라 달라질 수 있습니다.</p>
+<div class="links"><a href="/calculator-list.html">← 계산기 목록</a></div>
+</section></main>
+<script>
+const $=id=>document.getElementById(id);
+const won=v=>Math.round(v).toLocaleString('ko-KR')+'원';
+// 급여 원천징수 금액은 10원 단위로 버립니다.
+const floor10=v=>Math.floor((v+1e-7)/10)*10;
+// 입력값을 안전한 범위로 제한합니다.
+function num(id,min,max){const v=Number($(id).value);return Number.isFinite(v)?Math.max(min,Math.min(max,v)):min}
+// 2026년 3월 1일부터 적용되는 자녀별 간이세액 공제액입니다.
+function childAdjustment(n){if(n<=0)return 0;if(n===1)return 20830;if(n===2)return 45830;return 45830+(n-2)*33330}
+// 간이세액표의 가족 수 열을 조회합니다.
+function lookupBaseTax(monthly,dependents){
+  const dep=Math.max(1,Math.round(dependents));
+  const thousand=Math.floor(monthly/1000);
+  if(thousand<770)return 0;
+  let tax;
+  if(thousand<10000){
+    let lo=0,hi=TAX_TABLE.length-1,idx=0;
+    while(lo<=hi){const mid=(lo+hi)>>1;if(TAX_TABLE[mid][0]<=thousand){idx=mid;lo=mid+1}else hi=mid-1}
+    const col=Math.min(dep,11)+1;
+    tax=Number(TAX_TABLE[idx][col]||0);
+    if(dep>11){const tax10=Number(TAX_TABLE[idx][11]||0);const tax11=Number(TAX_TABLE[idx][12]||0);tax=Math.max(0,tax11-(tax10-tax11)*(dep-11))}
+  }else{
+    const base=Number(TAX_TABLE_HIGH[Math.min(dep,11)+1]||0);
+    if(monthly<14000000)tax=base+(monthly-10000000)*0.98*0.35+25000;
+    else if(monthly<28000000)tax=base+1397000+(monthly-14000000)*0.98*0.38;
+    else if(monthly<30000000)tax=base+6610600+(monthly-28000000)*0.98*0.40;
+    else if(monthly<45000000)tax=base+7394600+(monthly-30000000)*0.40;
+    else if(monthly<87000000)tax=base+13394600+(monthly-45000000)*0.42;
+    else tax=base+31034600+(monthly-87000000)*0.45;
+    if(dep>11){const tax10=Number(TAX_TABLE_HIGH[11]||0);const tax11=Number(TAX_TABLE_HIGH[12]||0);const diff=tax10-tax11;tax=Math.max(0,tax11-diff*(dep-11)+(tax-base))}
+  }
+  return Math.max(0,floor10(tax));
+}
+function calculate(){
+  const annual=Math.round(num('salary',0,2000000000));
+  const gross=annual/12;
+  const nontax=Math.min(num('nontax',0,100000000),gross);
+  const taxable=Math.max(0,gross-nontax);
+  const dependents=Math.round(num('dependents',1,20));
+  const children=Math.min(Math.round(num('children',0,20)),dependents);
+  const withholding=Number($('withholding').value)||1;
+  // 2026년 근로자 부담 기준 4대보험을 계산합니다.
+  const pensionBase=taxable>0?Math.max(410000,Math.min(Math.floor(taxable/1000)*1000,6590000)):0;
+  const pension=floor10(pensionBase*0.0475);
+  const health=floor10(taxable*0.03595);
+  const care=floor10(health*0.1314);
+  const employment=floor10(taxable*0.009);
+  const tableTax=lookupBaseTax(taxable,dependents);
+  const incomeTax=floor10(Math.max(0,tableTax-childAdjustment(children))*withholding);
+  const localTax=floor10(incomeTax*0.1);
+  const total=pension+health+care+employment+incomeTax+localTax;
+  const takeHome=Math.max(0,gross-total);
+  $('take').textContent=won(takeHome);
+  $('annual').textContent='연간 예상 실수령액 '+won(takeHome*12);
+  $('gross').textContent=won(gross);
+  $('deduction').textContent=won(total);
+  $('ratio').textContent=(gross>0?takeHome/gross*100:0).toFixed(1)+'%';
+  const rows=[['월 급여',won(gross)],['국민연금','-'+won(pension)],['건강보험','-'+won(health)],['장기요양보험','-'+won(care)],['고용보험','-'+won(employment)],['소득세(간이세액표)','-'+won(incomeTax)],['지방소득세','-'+won(localTax)]];
+  $('rows').innerHTML=rows.map(([label,value])=>`<div class="row"><span>${label}</span><strong>${value}</strong></div>`).join('');
+  syncUrl();
+  $('status').textContent='2026년 간이세액표 기준으로 계산했습니다.';
+}
+// 공유 가능한 URL에 현재 입력값을 저장합니다.
+function syncUrl(){history.replaceState(null,'','?'+new URLSearchParams({salary:$('salary').value,nontax:$('nontax').value,dependents:$('dependents').value,children:$('children').value,withholding:$('withholding').value}))}
+const params=new URLSearchParams(location.search);
+['salary','nontax','dependents','children','withholding'].forEach(id=>{if(params.has(id))$(id).value=params.get(id)});
+$('form').onsubmit=e=>{e.preventDefault();calculate()};
+['salary','nontax','dependents','children','withholding'].forEach(id=>$(id).addEventListener('input',calculate));
+document.querySelectorAll('[data-salary]').forEach(button=>button.onclick=()=>{$('salary').value=button.dataset.salary;calculate()});
+$('reset').onclick=()=>{history.replaceState(null,'',location.pathname);$('salary').value=40000000;$('nontax').value=200000;$('dependents').value=1;$('children').value=0;$('withholding').value=1;calculate()};
+$('share').onclick=async()=>{syncUrl();const url=location.href;try{if(navigator.share)await navigator.share({title:'Noviq 연봉 실수령액 계산기',url});else{await navigator.clipboard.writeText(url);$('status').textContent='공유 링크를 복사했습니다.'}}catch(e){$('status').textContent='공유를 취소했습니다.'}};
+// 다크모드 설정을 저장합니다.
+const root=document.documentElement,theme=$('theme'),saved=localStorage.getItem('noviq-theme');
+if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
+function themeText(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}
+theme.onclick=()=>{root.classList.toggle('dark');localStorage.setItem('noviq-theme',root.classList.contains('dark')?'dark':'light');themeText()};
+themeText();calculate();
+</script>
+</body></html>
