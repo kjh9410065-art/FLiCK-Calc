@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>영업일 계산기 | Noviq</title>
+<meta name="description" content="기준 날짜와 영업일 수를 입력하면 주말을 제외한 결과 날짜를 계산합니다.">
+<link rel="canonical" href="https://noviq.tcflick.com/business-days.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="영업일 계산기 | Noviq">
+<meta property="og:description" content="기준 날짜와 영업일 수를 입력하면 주말을 제외한 결과 날짜를 계산합니다.">
+<meta property="og:url" content="https://noviq.tcflick.com/business-days.html">
+<style>
+:root{color-scheme:light;--bg:#f5f7fb;--text:#151922;--muted:#667085;--card:#fff;--border:#e4e7ec;--primary:#2563eb}html.dark{color-scheme:dark;--bg:#0f1115;--text:#f2f4f7;--muted:#98a2b3;--card:#171a21;--border:#2b303a;--primary:#4f8cff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}.wrap{width:min(680px,calc(100% - 24px));margin:auto;padding:28px 0 48px}.top{display:flex;justify-content:space-between;align-items:center}.brand{font-size:14px;font-weight:900;letter-spacing:.12em;color:var(--primary)}button,a{font:inherit}.theme,.btn{border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);padding:10px 14px;font-weight:800;cursor:pointer}.theme{border-radius:999px}.card{margin-top:22px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px}h1{margin:0 0 7px;font-size:clamp(29px,8vw,40px)}.sub{margin:0 0 18px;color:var(--muted);font-size:14px}.field{margin-top:14px}.label{display:block;margin-bottom:7px;font-size:13px;font-weight:900}input,select{width:100%;padding:13px 14px;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font-size:16px}.actions{display:flex;gap:8px;margin-top:14px}.btn{flex:1}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.result{margin-top:18px;padding:18px;border-radius:16px;background:var(--bg);text-align:center}.value{font-size:32px;font-weight:950}.detail{margin-top:7px;color:var(--muted);font-size:13px;line-height:1.6}.links{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.links a{color:var(--primary);font-size:13px;font-weight:800;text-decoration:none}.notice{margin-top:16px;color:var(--muted);font-size:12px;line-height:1.6}
+</style>
+</head>
+<body>
+<main class="wrap">
+<div class="top"><div class="brand">NOVIQ</div><button class="theme" id="theme" type="button">🌙 다크모드</button></div>
+<section class="card">
+<h1>영업일 계산기</h1>
+<p class="sub">주말을 제외하고 기준 날짜에서 원하는 영업일만큼 이동합니다.</p>
+<div class="field"><label class="label" for="base">기준 날짜</label><input id="base" type="date"></div>
+<div class="field"><label class="label" for="days">영업일 수</label><input id="days" type="number" min="0" step="1" value="10" inputmode="numeric"></div>
+<div class="field"><label class="label" for="direction">계산 방향</label><select id="direction"><option value="add">영업일 더하기</option><option value="subtract">영업일 빼기</option></select></div>
+<div class="actions"><button class="btn primary" id="calculate" type="button">계산하기</button><button class="btn" id="reset" type="button">초기화</button></div>
+<div class="result"><div class="value" id="result">결과 날짜</div><div class="detail" id="detail">기준 날짜와 영업일 수를 입력하면 계산합니다.</div></div>
+<div class="links"><a href="/calculator-list.html">← 계산기 목록</a><a href="/date-add.html">날짜 더하기·빼기</a><a href="/date-difference.html">날짜 차이</a></div>
+<p class="notice">토요일과 일요일만 제외하는 단순 영업일 계산입니다. 공휴일·임시공휴일·회사 휴무일은 반영하지 않습니다.</p>
+</section>
+</main>
+<script>
+const root=document.documentElement,theme=document.getElementById('theme');
+// Noviq 전체 페이지에서 다크모드 설정을 유지합니다.
+const saved=localStorage.getItem('flick-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches))root.classList.add('dark');
+function updateTheme(){theme.textContent=root.classList.contains('dark')?'☀️ 라이트모드':'🌙 다크모드'}theme.addEventListener('click',()=>{const dark=root.classList.toggle('dark');localStorage.setItem('flick-theme',dark?'dark':'light');updateTheme()});updateTheme();
+const base=document.getElementById('base'),days=document.getElementById('days'),direction=document.getElementById('direction'),result=document.getElementById('result'),detail=document.getElementById('detail');
+function parseDate(value){if(!value)return null;const [y,m,d]=value.split('-').map(Number);return new Date(Date.UTC(y,m-1,d))}
+function formatDate(date){return `${date.getUTCFullYear()}년 ${String(date.getUTCMonth()+1).padStart(2,'0')}월 ${String(date.getUTCDate()).padStart(2,'0')}일`}
+function calculate(){
+  const date=parseDate(base.value),count=Math.max(0,Math.floor(Number(days.value)||0));
+  if(!date){result.textContent='결과 날짜';detail.textContent='기준 날짜와 영업일 수를 입력하면 계산합니다.';return}
+  // 하루씩 이동하면서 토요일(6)과 일요일(0)은 영업일 수에서 제외합니다.
+  const step=direction.value==='add'?1:-1;let remaining=count;
+  while(remaining>0){date.setUTCDate(date.getUTCDate()+step);const day=date.getUTCDay();if(day!==0&&day!==6)remaining--;}
+  result.textContent=formatDate(date);
+  detail.textContent=`기준 날짜에서 ${count.toLocaleString('ko-KR')}영업일 ${direction.value==='add'?'후':'전'}입니다.`;
+}
+[base,days,direction].forEach(input=>input.addEventListener('input',calculate));direction.addEventListener('change',calculate);
+document.getElementById('calculate').addEventListener('click',calculate);
+document.getElementById('reset').addEventListener('click',()=>{base.value='';days.value='10';direction.value='add';calculate()});
+</script>
+</body>
+</html>
