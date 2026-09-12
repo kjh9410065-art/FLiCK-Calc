@@ -34,4 +34,5 @@ const brackets=[{limit:14000000,rate:0.06,deduction:0},{limit:50000000,rate:0.15
 function won(value){return `${Math.round(value).toLocaleString('ko-KR')}원`}
 function calculate(){const value=Math.max(0,Number(base.value)||0);const bracket=brackets.find(item=>value<=item.limit);const tax=Math.max(0,value*bracket.rate-bracket.deduction);baseResult.textContent=won(value);rateResult.textContent=`${bracket.rate*100}%`;deductionResult.textContent=won(bracket.deduction);taxResult.textContent=won(tax)}
 base.addEventListener('input',calculate);reset.addEventListener('click',()=>{base.value=30000000;calculate()});calculate();
-</script></body></html>
+</script><script src="/favorites.js"></script>
+</body></html>

@@ -40,4 +40,5 @@ function gcd(x,y){x=Math.abs(Math.round(x));y=Math.abs(Math.round(y));while(y){c
 function fmt(n){return Number.isFinite(n)?n.toLocaleString('ko-KR',{maximumFractionDigits:6}):'계산 불가'}
 function calculate(){const av=Number(a.value),bv=Number(b.value);ratio.textContent=`${fmt(av)} : ${fmt(bv)}`;if(bv===0){decimal.textContent='계산 불가'}else decimal.textContent=fmt(av/bv);const total=av+bv;if(total===0)percent.textContent='계산 불가';else percent.textContent=`${fmt(av/total*100)}%`;if(Number.isInteger(av)&&Number.isInteger(bv)){if(av===0&&bv===0)simple.textContent='0 : 0';else{const g=gcd(av,bv);simple.textContent=`${av/g} : ${bv/g}`}}else simple.textContent='정수 입력 시 표시'}
 a.addEventListener('input',calculate);b.addEventListener('input',calculate);document.getElementById('reset').addEventListener('click',()=>{a.value=2;b.value=3;calculate()});calculate();
-</script></body></html>
+</script><script src="/favorites.js"></script>
+</body></html>

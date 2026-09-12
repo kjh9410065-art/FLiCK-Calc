@@ -39,4 +39,5 @@ const total=document.getElementById('total'),people=document.getElementById('peo
 const money=n=>Math.round(n).toLocaleString('ko-KR')+'원';
 function calculate(){const amount=Math.max(0,Number(total.value)||0),count=Math.max(1,Math.floor(Number(people.value)||1));const result=amount/count;perPerson.textContent=money(result);formula.textContent=`${Math.round(amount).toLocaleString('ko-KR')} ÷ ${count}`}
 total.addEventListener('input',calculate);people.addEventListener('input',calculate);document.getElementById('reset').addEventListener('click',()=>{total.value=100000;people.value=4;calculate()});calculate();
-</script></body></html>
+</script><script src="/favorites.js"></script>
+</body></html>
