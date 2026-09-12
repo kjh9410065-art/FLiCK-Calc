@@ -1,0 +1,73 @@
+name: Apply calculator SEO patch
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    # SEO 패치가 만든 커밋에는 다시 실행하지 않아 무한 커밋을 막습니다.
+    if: ${{ !contains(github.event.head_commit.message, '[seo-patch]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch calculator SEO
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          root = Path('public')
+          files = sorted(root.glob('*.html'))
+          targets = [p for p in files if p.name not in {
+              'index.html', 'calculator-list.html', 'privacy.html', 'terms.html', 'contact.html'
+          }]
+
+          for path in targets:
+              text = path.read_text(encoding='utf-8')
+              original = text
+
+              # 개별 계산기에도 사이트 아이콘을 동일하게 적용합니다.
+              if 'rel="icon"' not in text:
+                  marker = '<meta name="viewport" content="width=device-width,initial-scale=1">'
+                  text = text.replace(marker, marker + '\n<link rel="icon" href="/favicon.svg">\n<link rel="apple-touch-icon" href="/favicon.svg">', 1)
+
+              # 검색엔진이 페이지의 계산기 유형을 더 명확하게 이해하도록 WebPage + SoftwareApplication 구조화 데이터를 추가합니다.
+              if 'application/ld+json' not in text:
+                  slug = path.stem
+                  title_m = re.search(r'<title>(.*?)</title>', text, re.S)
+                  desc_m = re.search(r'<meta name="description" content="(.*?)">', text, re.S)
+                  title = title_m.group(1).strip() if title_m else f'Noviq - {slug} 계산기'
+                  desc = desc_m.group(1).strip() if desc_m else '생활에 필요한 계산을 간편하게 이용할 수 있는 Noviq 계산기입니다.'
+                  data = f'''\n<script type="application/ld+json">{{"@context":"https://schema.org","@graph":[{{"@type":"WebPage","name":{title!r},"url":"https://noviq.tcflick.com/{path.name}","description":{desc!r}}},{{"@type":"SoftwareApplication","name":{title!r},"applicationCategory":"UtilitiesApplication","operatingSystem":"Web","url":"https://noviq.tcflick.com/{path.name}","offers":{{"@type":"Offer","price":"0","priceCurrency":"KRW"}}}}]}}</script>\n'''
+                  # JSON 문자열은 Python repr이 아니라 JSON 문자열이어야 하므로 작은따옴표를 안전하게 JSON으로 다시 만듭니다.
+                  import json
+                  graph = {"@context":"https://schema.org","@graph":[
+                      {"@type":"WebPage","name":title,"url":f"https://noviq.tcflick.com/{path.name}","description":desc},
+                      {"@type":"SoftwareApplication","name":title,"applicationCategory":"UtilitiesApplication","operatingSystem":"Web","url":f"https://noviq.tcflick.com/{path.name}","offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"}}
+                  ]}
+                  data = '\n<script type="application/ld+json">' + json.dumps(graph, ensure_ascii=False, separators=(',', ':')) + '</script>\n'
+                  text = text.replace('</head>', data + '</head>', 1)
+
+              if text != original:
+                  path.write_text(text, encoding='utf-8')
+
+          print(f'Patched {sum(p.read_text(encoding="utf-8") != "" for p in targets)} calculator pages.')
+          PY
+
+      - name: Commit SEO patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/*.html
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Apply calculator SEO improvements [seo-patch]"
+          git push
